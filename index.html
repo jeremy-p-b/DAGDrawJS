@@ -1,33 +1,23 @@
 <!doctype html>
 <html lang="en-GB">
 <head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130731763-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-130731763-1');
-  </script>
-
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <meta name="description" content="Create wiring diagrams for your HiFi to share with others.">
+  <meta name="description" content="Create minimalist directed acyclic graphs (DAGs).">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>HiFiDraw</title>
+  <title>DAGDraw</title>
   <link rel="shortcut icon" type="image/png" href="images/pencil_favicon_small.png"/>
 
   <link rel="stylesheet" href="css/paper.css">
-  <link rel="stylesheet" href="css/hifidraw.css">
+  <link rel="stylesheet" href="css/dagdraw.css">
   <link rel="stylesheet" href="css/jquery-ui.min.css">
 
 </head>
 <body>
   <nav class="split-nav">
     <div class="nav-brand">
-      <h3><a href="#">HiFi Draw</a></h3>
+      <h3><a href="#">DAG Draw</a></h3>
     </div>
     <div class="collapsible">
       <input id="collapsible1" type="checkbox" name="collapsible1">
@@ -41,7 +31,7 @@
       <div class="collapsible-body">
         <ul class="inline">
           <li><a href="/examples.html" id="id_examples_link">Examples</a></li>
-          <li><a href="https://github.com/Iain-S/HiFiDrawJS" id="id_github_link">GitHub</a></li>
+          <li><a href="https://github.com/jeremy-p-b/DAGDrawJS" id="id_github_link">GitHub</a></li>
         </ul>
       </div>
     </div>
@@ -65,6 +55,8 @@
     </div>
     <div class="xs-12 md-3 col">
       <div class="paper small-text full-height">
+        <p>A free website to draw (stylistically minimalist) direct acyclic graphs (DAGs).</p>
+        <p> Use <em>Refresh</em> to convert curved lines to straight lines.</p>
         <h5>Keyboard Shortcuts</h5>
         <p>
           ENTER: Add new row to the end of the table.<br>

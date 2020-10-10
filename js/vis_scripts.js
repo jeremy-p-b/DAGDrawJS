@@ -47,18 +47,14 @@ function makeDestinationBox(value, number) {
 }
 
 
-function makeConnectorMenu(value, number) {
-    "use strict";
-    return makeTextInput("via", "connectors", value, number);
-}
 
 
 function rowIsValid(rowObj) {
     "use strict";
     const tableTextBoxes = rowObj.find("input[type=text]");
 
-    // Check that we have three text boxes and at least the source and destination are filled in
-    return tableTextBoxes.length === 3 &&
+    // Check that we have two text boxes and at least the source and destination are filled in
+    return tableTextBoxes.length === 2 &&
         tableTextBoxes.eq(0).val().length &&
         tableTextBoxes.eq(2).val().length;
 }
@@ -136,13 +132,10 @@ function graphFromTable(tableObj) {
             // Find label from drop-down
             const connTD = tableRow.children("td").eq(1);
 
-            const connLabel = connTD.children("input").first().val();
-
             // Add edge
             edges.push({from: srcID,
                         to: dstID,
-                        arrows: "to",
-                        label: connLabel});
+                        arrows: "to"});
         }
     });
 
@@ -190,19 +183,23 @@ function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
                         // we could give the user some warning to set one connector to simple
         width: "100%",
         height: "500px",
-        nodes: {
-            font: {
-                size: 20,
-                face: "Patrick Hand SC, arial"  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC
-            }
-        },
         edges: {
             length: 1000, // this doesn't seem to do anything.  Confirm and report a bug...
             font: {
-                size: 15,
+                size: 10,
                 face: "Patrick Hand SC, arial"
             },
+            color: {
+                color:'#000000',
+            },
             arrowStrikethrough: false // note we may want to make the node borders a little thicker
+        },
+        nodes: {
+            color:'#ffffff',
+            font: {
+                size: 20,
+                face: "Patrick Hand SC, arial"  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC,
+            }
         },
         layout: {
             hierarchical: false,
@@ -269,7 +266,7 @@ function addDownloadLink(downloadID, drawingArea) {
     downloadContext.font = "20px Patrick Hand SC, arial";
     downloadContext.textAlign = "right";
     downloadContext.fillStyle = "#000000";
-    downloadContext.fillText("Made with HiFiDraw", downloadCanvas.width-10, downloadCanvas.height-10);
+    downloadContext.fillText("Made with DAGDraw", downloadCanvas.width-10, downloadCanvas.height-10);
 
     downloadLink.setAttribute("href", downloadCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 
@@ -400,7 +397,7 @@ function makeDeleteButton(redrawFunc) {
 }
 
 
-function addRow(tableObj, redrawFunc, sourceVal, destVal, connVal) {
+function addRow(tableObj, redrawFunc, sourceVal, destVal) {
     "use strict";
     const tableBody = tableObj.children("tbody").first();
 
@@ -432,21 +429,14 @@ function addRow(tableObj, redrawFunc, sourceVal, destVal, connVal) {
         srcBox.focus();
     }
 
-    const connCell = newRow.insertCell(1);
-    const connMenu = makeConnectorMenu(connVal);
-
-    connMenu.focusout(redrawFunc);
-
-    connMenu.appendTo(connCell);
-
-    const dstCell = newRow.insertCell(2);
+    const dstCell = newRow.insertCell(1);
     const dstBox = makeDestinationBox(destVal);
 
     dstBox.focusout(redrawFunc);
 
     dstBox.appendTo(dstCell);
 
-    const deleteCell = newRow.insertCell(3);
+    const deleteCell = newRow.insertCell(2);
     makeDeleteButton(redrawFunc).appendTo(deleteCell);
 
     return tableBody;
@@ -459,7 +449,6 @@ function makeTable(tableID) {
                "<thead>\n" +
                  "<tr>\n" +
                    "<th>Source</th>\n" +
-                   "<th>Connector</th>\n" +
                    "<th>Destination</th>\n" +
                    "<th>\n" +
                      "<input type='button' value='+'/>\n" +
@@ -474,35 +463,11 @@ function makeTable(tableID) {
 
 function makeComponentsDatalist() {
     "use strict";
-    const options = ["headphones",
-                     "phone",
-                     "pc",
-                     "dac",
-                     "amp",
-                     "speakers"];
+    const options = ["smoking",
+                     "lung cancer",
+                     "obesity"];
 
     let datalistString = "<datalist id='components'>";
-
-    options.sort().forEach(function(option){
-        datalistString += "<option value='" + option + "'>";
-    });
-
-    datalistString += "</datalist>";
-
-    return $(datalistString);
-}
-
-
-function makeConnectorDatalist() {
-    "use strict";
-    const options = ["rca-rca",
-                     "rca<>rca",
-                     "rca<->rca",
-                     "rca",
-                     "speaker cable",
-                     "optical"];
-
-    let datalistString = "<datalist id='connectors'>";
 
     options.sort().forEach(function(option){
         datalistString += "<option value='" + option + "'>";
@@ -601,7 +566,7 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
         });
 
         if (fromLabel && toLabel) {
-            addRow(tableObj, redrawFunc, fromLabel, toLabel, edge.label);
+            addRow(tableObj, redrawFunc, fromLabel, toLabel);
         }
     });
 
@@ -615,41 +580,20 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
 function addSampleData(tableObj, redrawFunc, visNetwork) {
     "use strict";
 
-    // This is the old sample, I think it is a bit too complicated so is only here for posterity
-    const pc_turntable_passive_two_point_one =
-        "{\"nodes\":[" +
-            "{\"id\":\"pc\",\"label\":\"pc\",\"shape\":\"box\",\"x\":-411,\"y\":-189}," +
-            "{\"id\":\"dac\",\"label\":\"dac\",\"shape\":\"box\",\"x\":-304,\"y\":-187}," +
-            "{\"id\":\"amplifier\",\"label\":\"amplifier\",\"shape\":\"box\",\"x\":-137,\"y\":-67}," +
-            "{\"id\":\"turntable\",\"label\":\"turntable\",\"shape\":\"box\",\"x\":-387,\"y\":27}," +
-            "{\"id\":\"high level inputs\",\"label\":\"high level inputs\",\"shape\":\"box\",\"x\":-8,\"y\":-174}," +
-            "{\"id\":\"subwoofer\",\"label\":\"subwoofer\",\"shape\":\"box\",\"x\":143,\"y\":-174}," +
-            "{\"id\":\"passive speakers\",\"label\":\"passive speakers\",\"shape\":\"box\",\"x\":273,\"y\":23}]," +
-        "\"edges\":[" +
-            "{\"from\":\"pc\",\"to\":\"dac\",\"arrows\":\"to\",\"label\":\"usb\"}," +
-            "{\"from\":\"dac\",\"to\":\"amplifier\",\"arrows\":\"to\",\"label\":\"rca-rca\"}," +
-            "{\"from\":\"turntable\",\"to\":\"amplifier\",\"arrows\":\"to\",\"label\":\"rca-rca\"}," +
-            "{\"from\":\"amplifier\",\"to\":\"high level inputs\",\"arrows\":\"to\",\"label\":\"speaker cable\"}," +
-            "{\"from\":\"high level inputs\",\"to\":\"subwoofer\",\"arrows\":\"to\",\"label\":\"\"}," +
-            "{\"from\":\"subwoofer\",\"to\":\"passive speakers\",\"arrows\":\"to\",\"label\":\"speaker cable\"}]}";
-
     // The newer, simpler, sample data
-    const pc_dac_amp_speakers =
+    const smoking_obesity_cancer =
         "{\"nodes\":[" +
-            "{\"id\":\"pc\",\"label\":\"pc\",\"shape\":\"box\",\"x\":-265,\"y\":-254}," +
-            "{\"id\":\"dac\",\"label\":\"dac\",\"shape\":\"box\",\"x\":-88,\"y\":-254}," +
-            "{\"id\":\"amplifier\",\"label\":\"amplifier\",\"shape\":\"box\",\"x\":-85,\"y\":-133}," +
-            "{\"id\":\"left speaker\",\"label\":\"left speaker\",\"shape\":\"box\",\"x\":-199,\"y\":68}," +
-            "{\"id\":\"right speaker\",\"label\":\"right speaker\",\"shape\":\"box\",\"x\":59,\"y\":66}]," +
+            "{\"id\":\"smoking\",\"label\":\"smoking\",\"shape\":\"box\",\"x\":-265,\"y\":-254}," +
+            "{\"id\":\"obesity\",\"label\":\"obesity\",\"shape\":\"box\",\"x\":-88,\"y\":-254}," +
+            "{\"id\":\"lung cancer\",\"label\":\"lung cancer\",\"shape\":\"box\",\"x\":-85,\"y\":-133}]," +
         "\"edges\":[" +
-            "{\"from\":\"pc\",\"to\":\"dac\",\"arrows\":\"to\",\"label\":\"usb\"}," +
-            "{\"from\":\"dac\",\"to\":\"amplifier\",\"arrows\":\"to\",\"label\":\"rca-rca\"}," +
-            "{\"from\":\"amplifier\",\"to\":\"left speaker\",\"arrows\":\"to\",\"label\":\"speaker cable\"}," +
-            "{\"from\":\"amplifier\",\"to\":\"right speaker\",\"arrows\":\"to\",\"label\":\"speaker cable\"}]}";
+            "{\"from\":\"smoking\",\"to\":\"obesity\",\"arrows\":\"to\"}," +
+            "{\"from\":\"obesity\",\"to\":\"lung cancer\",\"arrows\":\"to\"}," +
+            "{\"from\":\"smoking\",\"to\":\"lung cancer\",\"arrows\":\"to\"}]}";
 
     // You can create a sample graph on the home page and then use the permalink as sample data
     addDataFromURL(
-        pc_dac_amp_speakers,
+        smoking_obesity_cancer,
         tableObj,
         redrawFunc,
         visNetwork);
@@ -708,7 +652,6 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
 
     // Make a data lists for use by the table
     makeComponentsDatalist().appendTo($("body"));
-    makeConnectorDatalist().appendTo($("body"));
 
     const inputDiv = $("#" + inputDivID);
     const drawingArea = $("#" + drawingDivID);
@@ -757,9 +700,9 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
 function getExampleDatasets() {
     "use strict";
     return {
-        "testing1": {"nodes":[{"id":"PC","label":"PC","shape":"box","x":-264,"y":-222},{"id":"Focusrite 2i2","label":"Focusrite 2i2","shape":"box","x":-20,"y":-223},{"id":"LSR310","label":"LSR310","shape":"box","x":-257,"y":-25},{"id":"2 x LSR305","label":"2 x LSR305","shape":"box","x":-4,"y":-28}],"edges":[{"from":"PC","to":"Focusrite 2i2","arrows":"to","label":"usb"},{"from":"Focusrite 2i2","to":"LSR310","arrows":"to","label":"2 x trs - trs"},{"from":"LSR310","to":"2 x LSR305","arrows":"to","label":"2 x xlr (f) - xlr (m)"}]},
-        "testing2.1": {"nodes":[{"id":"CHROMECAST AUDIO","label":"CHROMECAST AUDIO","shape":"box","x":-77,"y":-330},{"id":"MARANTZ PM6006","label":"MARANTZ PM6006","shape":"box","x":-73,"y":-219},{"id":"KEF Q150","label":"KEF Q150","shape":"box","x":6,"y":-48},{"id":" YAMAHA NS-SW300","label":" YAMAHA NS-SW300","shape":"box","x":-159,"y":8}],"edges":[{"from":"CHROMECAST AUDIO","to":"MARANTZ PM6006","arrows":"to","label":"mini-toslink <-> toslink"},{"from":"MARANTZ PM6006","to":"KEF Q150","arrows":"to","label":"speaker cable"},{"from":"MARANTZ PM6006","to":" YAMAHA NS-SW300","arrows":"to","label":"speaker cable"}]},
-        "testing2.2": {"nodes":[{"id":"CHROMECAST AUDIO","label":"CHROMECAST AUDIO","shape":"box","x":-77,"y":-330},{"id":"MARANTZ PM6006","label":"MARANTZ PM6006","shape":"box","x":-73,"y":-219},{"id":" YAMAHA NS-SW300","label":" YAMAHA NS-SW300","shape":"box","x":-159,"y":8},{"id":"KEF Q150","label":"KEF Q150","shape":"box","x":24,"y":-98}],"edges":[{"from":"CHROMECAST AUDIO","to":"MARANTZ PM6006","arrows":"to","label":"mini-toslink <-> toslink"},{"from":" YAMAHA NS-SW300","to":"KEF Q150","arrows":"to","label":"speaker cable"},{"from":"MARANTZ PM6006","to":" YAMAHA NS-SW300","arrows":"to","label":"speaker cable"}]}
+        "testing1": {"nodes":[{"id":"PC","label":"PC","shape":"box","x":-264,"y":-222},{"id":"Focusrite 2i2","label":"Focusrite 2i2","shape":"box","x":-20,"y":-223},{"id":"LSR310","label":"LSR310","shape":"box","x":-257,"y":-25},{"id":"2 x LSR305","label":"2 x LSR305","shape":"box","x":-4,"y":-28}],"edges":[{"from":"PC","to":"Focusrite 2i2","arrows":"to"},{"from":"Focusrite 2i2","to":"LSR310","arrows":"to"},{"from":"LSR310","to":"2 x LSR305","arrows":"to"}]},
+        "testing2.1": {"nodes":[{"id":"CHROMECAST AUDIO","label":"CHROMECAST AUDIO","shape":"box","x":-77,"y":-330},{"id":"MARANTZ PM6006","label":"MARANTZ PM6006","shape":"box","x":-73,"y":-219},{"id":"KEF Q150","label":"KEF Q150","shape":"box","x":6,"y":-48},{"id":" YAMAHA NS-SW300","label":" YAMAHA NS-SW300","shape":"box","x":-159,"y":8}],"edges":[{"from":"CHROMECAST AUDIO","to":"MARANTZ PM6006","arrows":"to"},{"from":"MARANTZ PM6006","to":"KEF Q150","arrows":"to"},{"from":"MARANTZ PM6006","to":" YAMAHA NS-SW300","arrows":"to"}]},
+        "testing2.2": {"nodes":[{"id":"CHROMECAST AUDIO","label":"CHROMECAST AUDIO","shape":"box","x":-77,"y":-330},{"id":"MARANTZ PM6006","label":"MARANTZ PM6006","shape":"box","x":-73,"y":-219},{"id":" YAMAHA NS-SW300","label":" YAMAHA NS-SW300","shape":"box","x":-159,"y":8},{"id":"KEF Q150","label":"KEF Q150","shape":"box","x":24,"y":-98}],"edges":[{"from":"CHROMECAST AUDIO","to":"MARANTZ PM6006","arrows":"to"},{"from":" YAMAHA NS-SW300","to":"KEF Q150","arrows":"to"},{"from":"MARANTZ PM6006","to":" YAMAHA NS-SW300","arrows":"to"}]}
     };
 }
 

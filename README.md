@@ -1,5 +1,5 @@
 # DAG Draw JS
-A tool for drawing directed acyclic graphs forked from HiFi Draw JS https://github.com/Iain-S/HiFiDrawJS
+A tool for drawing directed acyclic graphs forked from HiFi Draw JS https://github.com/Iain-S/HiFiDrawJS.
 
 #  Instructions are as per HiFi Draw JS
 

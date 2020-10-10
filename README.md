@@ -1,5 +1,7 @@
-# HiFi Draw JS
-I noticed that there were no simple websites that allow you to draw a diagram of your hifi.  I field a lot of questions about how best to wire together different components like PCs, amplifiers, speakers, mixers, sub-woofers, etc.  Wouldn't it be nice if people could go to a site, click a couple of buttons and end up with a diagram to share online or with friends?  Well, this is my first attempt at such a site.  It uses very simple JavaScript plus a couple of other libs.
+# DAG Draw JS
+A tool for drawing directed acyclic graphs forked from HiFi Draw JS https://github.com/Iain-S/HiFiDrawJS
+
+#  Instructions are as per HiFi Draw JS
 
 ## Getting started
 Very little is needed.  Everything to render the main page is straight JavaScript, CSS and html.  You should be able to clone the repo and run a webserver from the root directory.  If you have python, you can use this command to run a web server: 
@@ -28,17 +30,7 @@ I would like to speed these tests up but they work fine.
 ## Coding style
 I love Python's PEP8.  I dislike the lack of a widely used JavaScript standard.  I try to be consistent with naming conventions but don't always succeed.  I use the Notepad++ JSLint plugin when working on Windows.  When working on Linux, I let PyCharm correct my JavaScript and Python.  I check html using [this w3 validator](https://validator.w3.org/nu/#textarea).
 
-## Versioning
-Use [SemVer](http://semver.org/) for versioning.
-
-## Built With
-* [vis.js](http://visjs.org) - see below
-* jQuery
-* [PaperCSS](https://www.getpapercss.com)
-
-Vis JS is a visualization library that does a good job of rendering graphs.  The wiring of a hifi can reasonably be approximated by a directed graph where each component (CD player, amplifier, speaker, etc.) is a node and each connection (RCA, XLR, bluetooth, etc.) an edge.
-
 ## Licence
-
-This project is licensed under the GNU GPLv3 - see the [LICENCE.md](https://github.com/Iain-S/HiFiDrawJS/blob/master/LICENCE.txt) file for details.
+The original HiFi Draw JS project is licensed under the GNU GPLv3 - see the [LICENCE.md](https://github.com/Iain-S/HiFiDrawJS/blob/master/LICENCE.txt) file for details.
  
+This project is also licensed under the GNU GPLv3.

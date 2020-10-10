@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Unit tests for the main HiFiDraw page.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Unit Tests</title>
+  <link rel="shortcut icon" type="image/png" href="images/pencil_favicon_small.png"/>
+  
+  <link rel="stylesheet" href="css/paper.css">
+  <link rel="stylesheet" href="css/hifidraw.css">
+</head>
+<body>
+  <nav class="split-nav">
+    <div class="nav-brand">
+      <h3><a href="/">HiFi Draw</a></h3>
+    </div>
+    <div class="collapsible">
+      <input id="collapsible1" type="checkbox" name="collapsible1">
+      <button>
+        <label for="collapsible1">
+          <div class="bar1"></div>
+          <div class="bar2"></div>
+          <div class="bar3"></div>
+        </label>
+      </button>
+      <div class="collapsible-body">
+        <ul class="inline">
+          <li><a href="/examples.html" id="id_examples_link">Examples</a></li>
+          <li><a href="https://github.com/Iain-S/HiFiDrawJS" id="id_github_link">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="paper">
+    <h3>Unit Test Results</h3>
+    <div id="test_results"></div>
+    <div id="inputDiv">
+    <table id="inputTable">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Connector</th>
+          <th>Destination</th>
+          <th style="padding-left: 1rem">
+            <input type="button" id="btnAdd" value="Add" style="padding: 2px 17px"/>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    </div>
+    <div id="div_for_testing">
+    <!-- To test our tests <input type="text"> -->
+    </div>
+    <div id="drawing_div" class="border border-primary"></div>
+    <a id="id_download" href="">Download</a>
+    <datalist id="components">
+      <option value="smartphone">
+      <option value="stereo amplifier">
+      <option value="av receiver">
+      <option value="passive speakers">
+      <option value="active speakers">
+    </datalist>
+  </div> <!-- End the main div -->
+  <!-- jQuery library javascript -->
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <!-- Vis JS -->
+  <script src="js/vis.min.js"></script>
+  <!-- Our JS -->
+  <script src="js/vis_scripts.js"></script>
+  <!-- Testing assertions -->
+  <script src="js/chai.js"></script> 
+  <!-- Our unit tests -->
+  <script src="js/vis_scripts.test.js"></script>
+</body>
+</html>

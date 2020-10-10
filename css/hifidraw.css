@@ -1,0 +1,86 @@
+body {
+    /* Background pattern from Toptal Subtle Patterns */
+    background-image: url("../images/subtle_white_feathers.png");
+}
+
+.minwid {
+    /* keep our table container big enough*/
+    min-width: 18rem;
+}
+
+.example-button {
+    /* keep our buttons narrow enough */
+    max-width: 7rem;
+    min-width: 7rem;
+}
+
+.col {
+    /* decrease the default padding */
+    padding: 0.5rem;
+}
+
+.paper {
+    /* decrease the default margin */
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    padding: 0.5rem;
+}
+
+.paper-border {
+    /* for other elements to have the same border as paper */
+    border: 1px solid #c1c0bd;
+}
+
+.split-nav {
+    /* nav doesn't have a border by default */
+    border: 1px solid #c1c0bd;
+}
+
+.paper.small-text {
+    /* fit more in each paper element */
+    font-size: 0.75rem;
+}
+
+input {
+    font-size: 0.75rem;
+    width: 100%;
+    padding: 0.2rem;
+}
+
+select {
+    font-size: 0.75rem;
+    width: 4.5rem;
+
+    /* top, right, bottom, left */
+    padding: 0.15rem 0rem 0.15rem 0rem;
+}
+
+table input[type="button"] {
+    font-size: 0.75rem;
+    margin-bottom: 0rem;
+
+    /* top right bottom left */
+    padding: 0.2rem 0.4rem 0.2rem 0.4rem;
+}
+
+
+div table th tr td {
+    /* Make the table cells a little smaller */
+    padding: 0.1rem;
+}
+
+.word-wrap {
+    word-wrap: break-word;
+}
+
+/*#id_download_1, #id_download_2,*/
+.no-wrap {
+    /* So that the button doesn't try to wrap over two lines */
+    white-space: nowrap
+}
+
+.full-height {
+    /* We want our papers to be the same height as each other when on the same row*/
+    height: 100%;
+}
+

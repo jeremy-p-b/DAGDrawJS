@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130731763-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-130731763-1');
+  </script>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="description" content="Create wiring diagrams for your HiFi to share with others.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>HiFiDraw</title>
+  <link rel="shortcut icon" type="image/png" href="images/pencil_favicon_small.png"/>
+
+  <link rel="stylesheet" href="css/paper.css">
+  <link rel="stylesheet" href="css/hifidraw.css">
+  <link rel="stylesheet" href="css/jquery-ui.min.css">
+
+</head>
+<body>
+  <nav class="split-nav">
+    <div class="nav-brand">
+      <h3><a href="#">HiFi Draw</a></h3>
+    </div>
+    <div class="collapsible">
+      <input id="collapsible1" type="checkbox" name="collapsible1">
+      <button>
+        <label for="collapsible1">
+          <div class="bar1"></div>
+          <div class="bar2"></div>
+          <div class="bar3"></div>
+        </label>
+      </button>
+      <div class="collapsible-body">
+        <ul class="inline">
+          <li><a href="/examples.html" id="id_examples_link">Examples</a></li>
+          <li><a href="https://github.com/Iain-S/HiFiDrawJS" id="id_github_link">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="row">
+    <div class="col-fill col minwid">
+      <div class="paper small-text full-height" id="inputDiv">
+        <!--<div class="collapsible">-->
+          <!--<input id="collapsible10" type="checkbox" name="collapsible">-->
+          <!--<label for="collapsible10">Instructions</label>-->
+          <!--<div class="collapsible-body">-->
+            <!--<span>Each row in the table represents a connection between a source and a destination component.  </span>-->
+          <!--</div>-->
+        <!--</div>-->
+      </div>
+    </div>
+    <div class="xs-12 md-6 col">
+      <div class="paper small-text full-height">
+        <div id="drawing_div" class="paper-border"></div>
+      </div>
+    </div>
+    <div class="xs-12 md-3 col">
+      <div class="paper small-text full-height">
+        <h5>Keyboard Shortcuts</h5>
+        <p>
+          ENTER: Add new row to the end of the table.<br>
+          SHIFT + ENTER: Remove the last row from the table.
+        </p>
+        <h5>Export Your Image</h5>
+        <p>Either download your image as a .png file or use the permalink to come back here at a later date.</p>
+        <div class="row">
+          <!-- This will be a button to download the image as a png -->
+          <div class="col-fill col align-middle example-button">
+            <a id="id_download" class="paper-btn btn-small no-wrap" href="" download="HiFiDraw.png">Download image</a>
+          </div>
+          <div class="col-fill col align-middle example-button">
+            <input type="button" class="btn-small" onclick="copyToClipboard('id_export_link');" value="Copy permalink"/>
+          </div>
+        </div>
+        <div class="collapsible" id="id_view_permalink">
+          <input id="collapsible2" type="checkbox" name="collapsible">
+          <label for="collapsible2">View permalink</label>
+          <div class="collapsible-body">
+            <!-- Our URL for returning to this page another time will be put here -->
+            <p id="id_export_link" class="word-wrap"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- jQuery library -->
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <!-- jQuery UI library -->
+  <script src="js/jquery-ui.min.js"></script>
+  <!-- Vis JS -->
+  <script src="js/vis.min.js"></script>
+  <!-- Our own javascript -->
+  <script src="js/vis_scripts.js"></script>
+  <script>
+    window.onload = function() {
+        // link our data and drawing area together
+        setUpSingleDrawingPage("inputDiv", "drawing_div", "id_export_link", "id_download");
+
+        // make table rows sortable with JQuery UI
+        $('tbody').sortable();
+    };
+  </script>
+</body>
+</html>

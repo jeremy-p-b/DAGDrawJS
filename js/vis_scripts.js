@@ -56,7 +56,7 @@ function rowIsValid(rowObj) {
     // Check that we have two text boxes and at least the source and destination are filled in
     return tableTextBoxes.length === 2 &&
         tableTextBoxes.eq(0).val().length &&
-        tableTextBoxes.eq(2).val().length;
+        tableTextBoxes.eq(1).val().length;
 }
 
 
@@ -124,13 +124,10 @@ function graphFromTable(tableObj) {
             const srcID = addNodeFromCell(srcTD, nodes);
 
             // Get dest
-            const dstTD = tableRow.children("td").eq(2);
+            const dstTD = tableRow.children("td").eq(1);
 
             // If dest is not in nodes already, add it
             const dstID = addNodeFromCell(dstTD, nodes);
-
-            // Find label from drop-down
-            const connTD = tableRow.children("td").eq(1);
 
             // Add edge
             edges.push({from: srcID,
@@ -190,7 +187,7 @@ function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
                 face: "Patrick Hand SC, arial"
             },
             color: {
-                color:'#000000',
+                color:'#000000'
             },
             arrowStrikethrough: false // note we may want to make the node borders a little thicker
         },
@@ -261,12 +258,6 @@ function addDownloadLink(downloadID, drawingArea) {
 
     // Draw the original canvas onto the destination canvas
     downloadContext.drawImage(networkCanvas, 0, 0);
-
-    // Add an attribution to hifidraw
-    downloadContext.font = "20px Patrick Hand SC, arial";
-    downloadContext.textAlign = "right";
-    downloadContext.fillStyle = "#000000";
-    downloadContext.fillText("Made with DAGDraw", downloadCanvas.width-10, downloadCanvas.height-10);
 
     downloadLink.setAttribute("href", downloadCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 
@@ -448,8 +439,8 @@ function makeTable(tableID) {
     return $("<table id='" + tableID + "'>\n" +
                "<thead>\n" +
                  "<tr>\n" +
-                   "<th>Source</th>\n" +
-                   "<th>Destination</th>\n" +
+                   "<th>From</th>\n" +
+                   "<th>To</th>\n" +
                    "<th>\n" +
                      "<input type='button' value='+'/>\n" +
                    "</th>\n" +
@@ -580,12 +571,12 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
 function addSampleData(tableObj, redrawFunc, visNetwork) {
     "use strict";
 
-    // The newer, simpler, sample data
+    // The sample data
     const smoking_obesity_cancer =
         "{\"nodes\":[" +
-            "{\"id\":\"smoking\",\"label\":\"smoking\",\"shape\":\"box\",\"x\":-265,\"y\":-254}," +
-            "{\"id\":\"obesity\",\"label\":\"obesity\",\"shape\":\"box\",\"x\":-88,\"y\":-254}," +
-            "{\"id\":\"lung cancer\",\"label\":\"lung cancer\",\"shape\":\"box\",\"x\":-85,\"y\":-133}]," +
+            "{\"id\":\"smoking\",\"label\":\"smoking\",\"shape\":\"box\",\"x\":-110,\"y\":-300}," +
+            "{\"id\":\"obesity\",\"label\":\"obesity\",\"shape\":\"box\",\"x\":-265,\"y\":-200}," +
+            "{\"id\":\"lung cancer\",\"label\":\"lung cancer\",\"shape\":\"box\",\"x\":0,\"y\":-200}]," +
         "\"edges\":[" +
             "{\"from\":\"smoking\",\"to\":\"obesity\",\"arrows\":\"to\"}," +
             "{\"from\":\"obesity\",\"to\":\"lung cancer\",\"arrows\":\"to\"}," +

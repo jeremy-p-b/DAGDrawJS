@@ -182,10 +182,6 @@ function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
         height: "500px",
         edges: {
             length: 1000, // this doesn't seem to do anything.  Confirm and report a bug...
-            font: {
-                size: 10,
-                face: "Patrick Hand SC, arial"
-            },
             color: {
                 color:'#000000'
             },
@@ -194,8 +190,8 @@ function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
         nodes: {
             color:'#ffffff',
             font: {
-                size: 20,
-                face: "Patrick Hand SC, arial"  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC,
+                size: 16,
+                face: "arial"  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC,
             }
         },
         layout: {
@@ -454,9 +450,9 @@ function makeTable(tableID) {
 
 function makeComponentsDatalist() {
     "use strict";
-    const options = ["smoking",
-                     "lung cancer",
-                     "obesity"];
+    const options = ["Smoking",
+                     "Lung cancer",
+                     "Obesity"];
 
     let datalistString = "<datalist id='components'>";
 
@@ -574,13 +570,13 @@ function addSampleData(tableObj, redrawFunc, visNetwork) {
     // The sample data
     const smoking_obesity_cancer =
         "{\"nodes\":[" +
-            "{\"id\":\"smoking\",\"label\":\"smoking\",\"shape\":\"box\",\"x\":-110,\"y\":-300}," +
-            "{\"id\":\"obesity\",\"label\":\"obesity\",\"shape\":\"box\",\"x\":-265,\"y\":-200}," +
-            "{\"id\":\"lung cancer\",\"label\":\"lung cancer\",\"shape\":\"box\",\"x\":0,\"y\":-200}]," +
+            "{\"id\":\"Smoking\",\"label\":\"Smoking\",\"shape\":\"box\",\"x\":-110,\"y\":-300}," +
+            "{\"id\":\"Obesity\",\"label\":\"Obesity\",\"shape\":\"box\",\"x\":-265,\"y\":-200}," +
+            "{\"id\":\"Lung cancer\",\"label\":\"Lung cancer\",\"shape\":\"box\",\"x\":0,\"y\":-200}]," +
         "\"edges\":[" +
-            "{\"from\":\"smoking\",\"to\":\"obesity\",\"arrows\":\"to\"}," +
-            "{\"from\":\"obesity\",\"to\":\"lung cancer\",\"arrows\":\"to\"}," +
-            "{\"from\":\"smoking\",\"to\":\"lung cancer\",\"arrows\":\"to\"}]}";
+            "{\"from\":\"Smoking\",\"to\":\"Obesity\",\"arrows\":\"to\"}," +
+            "{\"from\":\"Obesity\",\"to\":\"Lung cancer\",\"arrows\":\"to\"}," +
+            "{\"from\":\"Smoking\",\"to\":\"Lung cancer\",\"arrows\":\"to\"}]}";
 
     // You can create a sample graph on the home page and then use the permalink as sample data
     addDataFromURL(

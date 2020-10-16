@@ -5,7 +5,7 @@ body {
 
 .minwid {
     /* keep our table container big enough*/
-    min-width: 18rem;
+    min-width: 14rem;
 }
 
 .example-button {

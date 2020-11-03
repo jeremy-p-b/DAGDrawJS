@@ -2,14 +2,6 @@
 /*jslint es6 */
 
 
-function countBodyRows(tableBody) {
-    "use strict";
-    const tableRows = tableBody.children("tr");
-
-    return tableRows.length;
-}
-
-
 function makeTextInput(placeholder, datalistID, value, number) {
     "use strict";
 
@@ -185,10 +177,18 @@ function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
             color: {
                 color:'#000000'
             },
+            smooth: false,
             arrowStrikethrough: false // note we may want to make the node borders a little thicker
         },
         nodes: {
-            color:'#ffffff',
+            color: {
+                border: '#000000',
+                background: '#ffffff'
+            },
+            shapeProperties: {
+                borderRadius: 0,
+            },
+            margin: 8,
             font: {
                 size: 16,
                 face: "arial"  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC,
@@ -308,7 +308,7 @@ function updateExportURL(graph, linkObject) {
 }
 
 
-function makeRedrawFunc (setExportURL, setDownloadLink, visNetwork, tableObj) {
+function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj) {
     "use strict";
 
     // When the user repositions a node, we need to update the export and download links
@@ -570,9 +570,9 @@ function addSampleData(tableObj, redrawFunc, visNetwork) {
     // The sample data
     const smoking_obesity_cancer =
         "{\"nodes\":[" +
-            "{\"id\":\"Smoking\",\"label\":\"Smoking\",\"shape\":\"box\",\"x\":-110,\"y\":-300}," +
-            "{\"id\":\"Obesity\",\"label\":\"Obesity\",\"shape\":\"box\",\"x\":-265,\"y\":-200}," +
-            "{\"id\":\"Lung cancer\",\"label\":\"Lung cancer\",\"shape\":\"box\",\"x\":0,\"y\":-200}]," +
+            "{\"id\":\"Smoking\",\"label\":\"Smoking\",\"shape\":\"box\",\"x\":0,\"y\":-60}," +
+            "{\"id\":\"Obesity\",\"label\":\"Obesity\",\"shape\":\"box\",\"x\":-120,\"y\":60}," +
+            "{\"id\":\"Lung cancer\",\"label\":\"Lung cancer\",\"shape\":\"box\",\"x\":120,\"y\":60}]," +
         "\"edges\":[" +
             "{\"from\":\"Smoking\",\"to\":\"Obesity\",\"arrows\":\"to\"}," +
             "{\"from\":\"Obesity\",\"to\":\"Lung cancer\",\"arrows\":\"to\"}," +

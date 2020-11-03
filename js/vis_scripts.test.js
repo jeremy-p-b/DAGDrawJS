@@ -44,44 +44,6 @@ const hifidrawTesting = (function() {
 
             source_box.remove();
         },
-
-
-        test_count_tbody_rows: function () {
-
-            const newTableBody = $("<tbody><tr></tr></tbody>");
-            assert.equal(countBodyRows(newTableBody), 1);
-
-            const emptyTableBody = $("<tbody></tbody>");
-            assert.equal(countBodyRows(emptyTableBody), 0);
-        },
-
-
-        test_make_connector_menu: function () {
-
-            const connector_menu = makeConnectorMenu().filter("input");
-            assert.equal(1, connector_menu.length, connector_menu.html());
-        },
-
-
-        test_make_connector_menu_with_id: function () {
-
-            let connector_menu = makeConnectorMenu(null, 0).filter("input");
-            assert.equal("id_via_0", connector_menu.attr("id"));
-
-            connector_menu = makeConnectorMenu(null, 66778).filter("input");
-            assert.equal("id_via_66778", connector_menu.attr("id"));
-        },
-        
-
-        // test_make_connector_menu_with_selection: function() {
-        //
-        //     const connector_menu = makeConnectorMenu("").filter("select");
-        //     // ToDo finish this off
-        //     // assert.equal("something", connector_menu.attr("id"));
-        //     //
-        //     // connector_menu = makeConnectorMenu('').filter("select");
-        //     // assert.equal("----", connector_menu.attr("id"));
-        // },
     
     
         test_make_destination_box: function() {
@@ -150,8 +112,8 @@ const hifidrawTesting = (function() {
             assert.equal(table.length, 1);
             assert.equal(table.attr("id"), "this_is_a_test_id");
     
-            const fourth_column = table.children("thead").first().children("tr").first().children("th").eq(3);
-            const add_button = fourth_column.children("input").first();
+            const third_column = table.children("thead").first().children("tr").first().children("th").eq(2);
+            const add_button = third_column.children("input").first();
             assert.equal(add_button.attr("value"), "+");
         },
     
@@ -169,7 +131,7 @@ const hifidrawTesting = (function() {
             const tableRef = $("#inputTable");
             let tableBody = tableRef.children("tbody").first();
             let table_rows = tableBody.children("tr");
-            assert.equal(4, table_rows.length, "Wrong number of rows.  Have you changed the table in unit_tests.html?");
+            assert.equal(3, table_rows.length, "Wrong number of rows.  Have you changed the table in unit_tests.html?");
 
             try {
                 addRow(tableRef, () => null);
@@ -178,7 +140,7 @@ const hifidrawTesting = (function() {
 
             tableBody = tableRef.children("tbody").first();
             table_rows = tableBody.children("tr");
-            assert.equal(5, table_rows.length, "Expected more rows after calling addRow.");
+            assert.equal(4, table_rows.length, "Expected more rows after calling addRow.");
 
             // Delete the last row
             try {
@@ -188,7 +150,7 @@ const hifidrawTesting = (function() {
     
             tableBody = tableRef.children("tbody").first();
             table_rows = tableBody.children("tr");
-            assert.equal(4, table_rows.length, "Expected fewer rows after calling deleteRowFrom.");
+            assert.equal(3, table_rows.length, "Expected fewer rows after calling deleteRowFrom.");
         },
 
 
@@ -197,7 +159,7 @@ const hifidrawTesting = (function() {
             const tableRef = $("#inputTable");
             let tableBody = tableRef.children("tbody").first();
             let table_rows = tableBody.children("tr");
-            assert.equal(4, table_rows.length, "Wrong number of rows.  Have you changed the table in unit_tests.html?");
+            assert.equal(3, table_rows.length, "Wrong number of rows.  Have you changed the table in unit_tests.html?");
     
             try {
                 addRow(tableRef);
@@ -206,7 +168,7 @@ const hifidrawTesting = (function() {
     
             tableBody = tableRef.children("tbody").first();
             table_rows = tableBody.children("tr");
-            assert.equal(5, table_rows.length, "Expected more rows after calling addRow.");
+            assert.equal(4, table_rows.length, "Expected more rows after calling addRow.");
     
             // Delete the last row
             try {
@@ -216,7 +178,7 @@ const hifidrawTesting = (function() {
     
             tableBody = tableRef.children("tbody").first();
             table_rows = tableBody.children("tr");
-            assert.equal(4, table_rows.length, "Expected fewer rows after calling deleteLastDataRowFrom.");
+            assert.equal(3, table_rows.length, "Expected fewer rows after calling deleteLastDataRowFrom.");
         },
     
     
@@ -296,7 +258,7 @@ const hifidrawTesting = (function() {
             const tableBody = tableRef.children("tbody").first();
             const tableRows = tableBody.children("tr");
             const new_row = tableRows.last().children("td");
-            assert.equal(new_row.length, 4, "New row has wrong number of columns.");
+            assert.equal(new_row.length, 3, "New row has wrong number of columns.");
         },
     
     
@@ -395,7 +357,6 @@ const hifidrawTesting = (function() {
                 "\t      </tr>\n" +
                 "        <tr>\n" +
                 "\t        <td><input value='comp1' type='text'></td>\n" +
-                "\t        <td><input value='connector' type='text'></td>\n" +
                 "\t        <td><input value='comp2' type='text'></td>\n" +
                 "\t      </tr>\n" +
                 "      </tbody>\n" +
@@ -409,7 +370,7 @@ const hifidrawTesting = (function() {
     
             const test_data = makeTable("some_id");
 
-            addRow(test_data, ()=>null, "part1", "part2", "XLR<>XLR");
+            addRow(test_data, ()=>null, "part1", "part2");
 
             const nodes = [
                 {id: "part1", label: "part1", shape: "box"},
@@ -418,13 +379,13 @@ const hifidrawTesting = (function() {
     
             // create an array with edges
             const edges = [
-                {from: "part1", to: "part2", arrows: "to", label: "XLR<>XLR"}
+                {from: "part1", to: "part2", arrows: "to"}
             ];
     
             const data = graphFromTable(test_data);
     
             assert.deepEqual(data.nodes, nodes, "nodes don't match " + data.nodes);
-            assert.deepEqual(data.edges, edges, "edges don't match " + data.nodes);
+            assert.deepEqual(data.edges, edges, "edges don't match " + data.edges);
         },
 
 
@@ -455,7 +416,6 @@ const hifidrawTesting = (function() {
     
             const test_data = $("<tr>" +
                                     "<td><input value='comp1' type='text'></td>" +
-                                    "<td><input value='connector' type='text'></td>" +
                                     "<td><input value='comp2' type='text'></td>" +
                                 "</tr>");
     
@@ -504,7 +464,7 @@ const hifidrawTesting = (function() {
             let tableBody = tableRef.children("tbody").first();
             let table_rows = tableBody.children("tr");
     
-            assert.equal(4, table_rows.length, "Wrong number of rows.  Have you changed the table in unit_tests.html?");
+            assert.equal(3, table_rows.length, "Wrong number of rows.  Have you changed the table in unit_tests.html?");
 
             const visNetwork = {setData: ()=>null};
             const redrawFunc = ()=>null;
@@ -515,7 +475,7 @@ const hifidrawTesting = (function() {
     
             tableBody = tableRef.children("tbody").first();
             table_rows = tableBody.children("tr");
-            assert.equal(8, table_rows.length, "Expected a different number of rows after calling addSampleData.");
+            assert.equal(6, table_rows.length, "Expected a different number of rows after calling addSampleData.");
         },
     
     
@@ -717,14 +677,7 @@ const hifidrawTesting = (function() {
         test_make_components_data_list: function() {
             const data_list = makeComponentsDatalist().filter("datalist").filter("#components");
             assert.equal(data_list.length, 1, "Expected one datalist");
-            assert.equal(data_list.children().length, 6);
-        },
-
-
-        test_make_connector_data_list: function() {
-            const data_list = makeConnectorDatalist().filter("datalist").filter("#connectors");
-            assert.equal(data_list.length, 1, "Expected one datalist");
-            assert.equal(data_list.children().length, 6);
+            assert.equal(data_list.children().length, 3);
         },
 
 

@@ -200,8 +200,11 @@ function makeEmptyNetwork(drawingArea) {
         },
         interaction: {
             dragView: false,
+            keyboard: {
+                enabled: false,
+                speed: {x: 3, y: 3, zoom: 0.01},
+            },
             zoomView: false,
-            zoomSpeed: 0.1,
             navigationButtons: true,
         }
     };

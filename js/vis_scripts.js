@@ -164,7 +164,7 @@ function getNodePositionsFromNetwork(graph, network) {
 }
 
 
-function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
+function makeEmptyNetwork(drawingArea) {
     "use strict";
     const visContainer = drawingArea[0];
     const visOptions = {
@@ -199,8 +199,10 @@ function makeEmptyNetwork(drawingArea, disableZoom, disableDrag) {
             randomSeed: 10161
         },
         interaction: {
-            dragView: disableDrag,
-            zoomView: disableZoom
+            dragView: false,
+            zoomView: false,
+            zoomSpeed: 0.1,
+            navigationButtons: true,
         }
     };
 
@@ -654,7 +656,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
         addDownloadLink(downloadID, drawingArea);
     };
 
-    const visNetwork = makeEmptyNetwork(drawingArea, false, false);
+    const visNetwork = makeEmptyNetwork(drawingArea);
 
     const inputTable = makeTable("inputTable");
 
@@ -699,7 +701,7 @@ function setUpExample(exampleName, drawingDivID, exportURLID, downloadID) {
     const exampleDataset = getExampleDatasets()[exampleName];
     const drawingArea = $("#" + drawingDivID);
 
-    const visNetwork = makeEmptyNetwork(drawingArea, true, true);
+    const visNetwork = makeEmptyNetwork(drawingArea);
     setNetworkData(exampleDataset, visNetwork);
     visNetwork.redraw();
 

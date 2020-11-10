@@ -163,6 +163,11 @@ function getNodePositionsFromNetwork(graph, network) {
    });
 }
 
+function getNodeOptions(graph, network) {
+    graph.fontSize = network.nodesHandler.options.font.size;
+    graph.shape = network.nodesHandler.options.shape;
+}
+
 function getVisOptions() {
     let visOptions = {
         physics: false, // if false then a -> b & b -> a overlaps and labels get messy
@@ -277,8 +282,7 @@ function setShapeStyle(visNetwork, shapeStyle) {
         visOptions.nodes.shape = shapeStyle;
         visOptions.nodes.color.border = 'black';
     }
-
-    visNetwork.setOptions(visOptions);
+    return visOptions;
 }
 
 function setFontSize(visNetwork, fontSize) {
@@ -370,6 +374,7 @@ function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj) {
                   function(){
                       const graph = graphFromTable(tableObj);
                       getNodePositionsFromNetwork(graph, visNetwork);
+                      getNodeOptions(graph, visNetwork);
                       setExportURL(graph);
                       setDownloadLink();
                   }
@@ -382,6 +387,7 @@ function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj) {
         let position;
 
         getNodePositionsFromNetwork(graph, visNetwork);
+        getNodeOptions(graph, visNetwork);
 
         scale = visNetwork.getScale();
         position = visNetwork.getViewPosition();
@@ -615,6 +621,18 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
     // This is necessary because we can't store the node x and y coordinates in the table
     // and hope for them to be displayed later
     setNetworkData(unpackedData, visNetwork);
+
+    // Set options if present in URL
+    let networkOptions;
+    if (typeof unpackedData.shape !== "undefined") {
+        networkOptions = setShapeStyle(visNetwork, unpackedData.shape);
+    } else {
+        networkOptions = getVisOptions();
+    }
+    if (typeof unpackedData.fontSize !== "undefined") {
+        networkOptions.nodes.font.size = parseInt(unpackedData.fontSize);
+    }
+    visNetwork.setOptions(networkOptions);
 }
 
 
@@ -719,7 +737,9 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const shapeMenu = addSelectMenu(shapeOptions, shapeMenuID, "text");
 
     shapeMenu.change(function(){
-        setShapeStyle(visNetwork, shapeMenu.val());
+        const visOptions = setShapeStyle(visNetwork, shapeMenu.val());
+        visNetwork.setOptions(visOptions);
+        redrawMe();
     });
 
     const fontOptions = getFontOptions();
@@ -728,6 +748,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
 
     fontMenu.change(function(){
        setFontSize(visNetwork, fontMenu.val());
+       redrawMe();
     });
 
     const button = inputTable.find("input").first();

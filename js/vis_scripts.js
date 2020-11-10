@@ -90,8 +90,8 @@ function addNodeFromCell(tdObject, nodeArray) {
     if (!id) {
         id = input.val();
         nodeArray.push({id: id,
-                        label: input.val(),
-                        shape: "box"});
+                        label: input.val()
+        });
     }
 
     return id;
@@ -163,11 +163,8 @@ function getNodePositionsFromNetwork(graph, network) {
    });
 }
 
-
-function makeEmptyNetwork(drawingArea) {
-    "use strict";
-    const visContainer = drawingArea[0];
-    const visOptions = {
+function getVisOptions() {
+    let visOptions = {
         physics: false, // if false then a -> b & b -> a overlaps and labels get messy
                         // we could give the user some warning to set one connector to simple
         width: "100%",
@@ -182,11 +179,17 @@ function makeEmptyNetwork(drawingArea) {
         },
         nodes: {
             color: {
-                border: '#000000',
+                border: '#ffffff',
                 background: '#ffffff'
             },
             shapeProperties: {
                 borderRadius: 0,
+            },
+            shape: 'box',
+            scaling: {
+                label: {
+                    enabled: true,
+                },
             },
             margin: 8,
             font: {
@@ -208,7 +211,14 @@ function makeEmptyNetwork(drawingArea) {
             navigationButtons: true,
         }
     };
+    return visOptions;
+}
 
+
+function makeEmptyNetwork(drawingArea) {
+    "use strict";
+    const visContainer = drawingArea[0];
+    let visOptions = getVisOptions();
     const visNetwork = new vis.Network(visContainer, {}, visOptions);
 
     // Perhaps add an image background to the canvas
@@ -236,6 +246,45 @@ function setNetworkData(graph, network) {
     };
 
     network.setData(visData);
+}
+
+function addSelectMenu(options, containerID, selected) {
+    "use strict"
+    const menuContainer = document.getElementById(containerID);
+    let selectMenu = $('<select>');
+    $(options).each(function() {
+        let option = $("<option>").attr('value',this.val).text(this.text);
+        if (this.val === selected) {
+            option.attr('selected', 'selected');
+        }
+        selectMenu.append(option);
+    });
+    selectMenu.appendTo(menuContainer);
+    return selectMenu;
+}
+
+function setShapeStyle(visNetwork, shapeStyle) {
+    let visOptions = getVisOptions();
+    if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
+        visOptions.nodes.size = 5;
+        visOptions.nodes.color.background = 'black';
+    }
+
+    if (shapeStyle === "text") {
+        visOptions.nodes.shape = 'box';
+        visOptions.nodes.color.border = 'white';
+    } else {
+        visOptions.nodes.shape = shapeStyle;
+        visOptions.nodes.color.border = 'black';
+    }
+
+    visNetwork.setOptions(visOptions);
+}
+
+function setFontSize(visNetwork, fontSize) {
+    let visOptions = getVisOptions();
+    visOptions.nodes.font.size = parseInt(fontSize);
+    visNetwork.setOptions(visOptions);
 }
 
 
@@ -575,9 +624,9 @@ function addSampleData(tableObj, redrawFunc, visNetwork) {
     // The sample data
     const smoking_obesity_cancer =
         "{\"nodes\":[" +
-            "{\"id\":\"Smoking\",\"label\":\"Smoking\",\"shape\":\"box\",\"x\":0,\"y\":-60}," +
-            "{\"id\":\"Obesity\",\"label\":\"Obesity\",\"shape\":\"box\",\"x\":-120,\"y\":60}," +
-            "{\"id\":\"Lung cancer\",\"label\":\"Lung cancer\",\"shape\":\"box\",\"x\":120,\"y\":60}]," +
+            "{\"id\":\"Smoking\",\"label\":\"Smoking\",\"x\":0,\"y\":-60}," +
+            "{\"id\":\"Obesity\",\"label\":\"Obesity\",\"x\":-120,\"y\":60}," +
+            "{\"id\":\"Lung cancer\",\"label\":\"Lung cancer\",\"x\":120,\"y\":60}]," +
         "\"edges\":[" +
             "{\"from\":\"Smoking\",\"to\":\"Obesity\",\"arrows\":\"to\"}," +
             "{\"from\":\"Obesity\",\"to\":\"Lung cancer\",\"arrows\":\"to\"}," +
@@ -639,7 +688,7 @@ function setKeydownListener(tableObj, redrawFunc) {
 }
 
 
-function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadID) {
+function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadID, shapeMenuID, fontMenuID) {
     "use strict";
 
     // Make a data lists for use by the table
@@ -664,6 +713,22 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const inputTable = makeTable("inputTable");
 
     const redrawMe = makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, inputTable);
+
+    const shapeOptions = getShapeOptions();
+
+    const shapeMenu = addSelectMenu(shapeOptions, shapeMenuID, "text");
+
+    shapeMenu.change(function(){
+        setShapeStyle(visNetwork, shapeMenu.val());
+    });
+
+    const fontOptions = getFontOptions();
+
+    const fontMenu = addSelectMenu(fontOptions, fontMenuID, 16);
+
+    fontMenu.change(function(){
+       setFontSize(visNetwork, fontMenu.val());
+    });
 
     const button = inputTable.find("input").first();
 
@@ -698,6 +763,32 @@ function getExampleDatasets() {
     };
 }
 
+function getShapeOptions() {
+    const shapeOptions = [
+        {val: "text", text: "Text"},
+        {val: "box", text: "Box"},
+        {val: "ellipse", text: "Ellipse"},
+        {val: "diamond", text: "Diamond"},
+        {val: "dot", text: "Dot"},
+        {val: "square", text: "Square"}
+    ]
+    return shapeOptions;
+}
+
+function getFontOptions() {
+    const fontOptions = [
+        {val: 12, text: "12"},
+        {val: 14, text: "14"},
+        {val: 16, text: "16"},
+        {val: 18, text: "18"},
+        {val: 20, text: "20"},
+        {val: 22, text: "22"},
+        {val: 24, text: "24"},
+        {val: 26, text: "26"},
+        {val: 28, text: "28"},
+    ]
+    return fontOptions;
+}
 
 function setUpExample(exampleName, drawingDivID, exportURLID, downloadID) {
     "use strict";

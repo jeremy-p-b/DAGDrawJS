@@ -10,8 +10,34 @@ body {
 
 .example-button {
     /* keep our buttons narrow enough */
-    max-width: 7rem;
-    min-width: 7rem;
+    max-width: 7em;
+    min-width: 7em;
+}
+
+.options, .buttons {
+    display: flex;
+}
+
+.options .drop-down {
+    max-width: 5rem;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+}
+
+.options select  {
+    font-size: 1em;
+    min-width: 5rem;
+    margin-top: 0.5rem;
+}
+
+.buttons .example-button {
+    max-width: 5rem;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+}
+
+.buttons .example-button a {
+    min-width: 5rem;
 }
 
 .col {
@@ -47,7 +73,7 @@ input {
     padding: 0.2rem;
 }
 
-select {
+.input-col select {
     font-size: 0.75rem;
     width: 4.5rem;
 
@@ -180,3 +206,4 @@ div table th tr td {
     /* Content for left arrow */
     content: "\02C5";
 }
+

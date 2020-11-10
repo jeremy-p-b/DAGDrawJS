@@ -34,7 +34,7 @@
   </nav>
   <div class="row">
     <div class="col-fill col minwid">
-      <div class="paper small-text full-height" id="inputDiv">
+      <div class="paper small-text full-height" id="inputDiv" class="input-col">
         <!--<div class="collapsible">-->
           <!--<input id="collapsible10" type="checkbox" name="collapsible">-->
           <!--<label for="collapsible10">Instructions</label>-->
@@ -57,14 +57,23 @@
           ENTER: Add new row to the end of the table.<br>
           SHIFT + ENTER: Remove the last row from the table.
         </p>
+        <h5>Options</h5>
+        <div class="options">
+          <div class="drop-down" id="id_shape_menu">
+            <span>Shape:</span>
+          </div>
+          <div class="drop-down" id ="id_font_menu">
+            <span>Font size:</span>
+          </div>
+        </div>
         <h5>Export Your Image</h5>
         <p>Either download your image as a .png file or use the permalink to come back here at a later date.</p>
-        <div class="row">
+        <div class="buttons">
           <!-- This will be a button to download the image as a png -->
-          <div class="col-fill col align-middle example-button">
+          <div class="example-button">
             <a id="id_download" class="paper-btn btn-small no-wrap" href="" download="HiFiDraw.png">Download image</a>
           </div>
-          <div class="col-fill col align-middle example-button">
+          <div class="example-button">
             <input type="button" class="btn-small" onclick="copyToClipboard('id_export_link');" value="Copy permalink"/>
           </div>
         </div>
@@ -90,7 +99,7 @@
   <script>
     window.onload = function() {
         // link our data and drawing area together
-        setUpSingleDrawingPage("inputDiv", "drawing_div", "id_export_link", "id_download");
+        setUpSingleDrawingPage("inputDiv", "drawing_div", "id_export_link", "id_download", "id_shape_menu", "id_font_menu");
 
         // make table rows sortable with JQuery UI
         $('tbody').sortable();

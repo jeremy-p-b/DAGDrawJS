@@ -268,7 +268,7 @@ function addSelectMenu(options, containerID, selected) {
     return selectMenu;
 }
 
-function setShapeStyle(visNetwork, shapeStyle) {
+function setStyle(visNetwork, shapeStyle, fontSize) {
     let visOptions = getVisOptions();
     if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
         visOptions.nodes.size = 5;
@@ -277,18 +277,13 @@ function setShapeStyle(visNetwork, shapeStyle) {
 
     if (shapeStyle === "text") {
         visOptions.nodes.shape = 'box';
-        visOptions.nodes.color.border = 'white';
+        visOptions.nodes.color.border = '#ffffff';
     } else {
         visOptions.nodes.shape = shapeStyle;
         visOptions.nodes.color.border = 'black';
     }
-    return visOptions;
-}
-
-function setFontSize(visNetwork, fontSize) {
-    let visOptions = getVisOptions();
     visOptions.nodes.font.size = parseInt(fontSize);
-    visNetwork.setOptions(visOptions);
+    return visOptions;
 }
 
 
@@ -307,7 +302,7 @@ function addDownloadLink(downloadID, drawingArea) {
     const downloadContext = downloadCanvas.getContext("2d");
 
     // Create a rectangle with the desired color
-    downloadContext.fillStyle = "#FFFFFF";
+    downloadContext.fillStyle = "#ffffff";
     downloadContext.fillRect(0, 0, networkCanvas.width, networkCanvas.height);
 
     // Draw the original canvas onto the destination canvas
@@ -623,15 +618,19 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
     setNetworkData(unpackedData, visNetwork);
 
     // Set options if present in URL
-    let networkOptions;
-    if (typeof unpackedData.shape !== "undefined") {
-        networkOptions = setShapeStyle(visNetwork, unpackedData.shape);
+    let fontSize;
+    let nodeShape;
+    if  (typeof unpackedData.fontSize !== "undefined") {
+        fontSize = parseInt(unpackedData.fontSize);
     } else {
-        networkOptions = getVisOptions();
+        fontSize = 16;
     }
-    if (typeof unpackedData.fontSize !== "undefined") {
-        networkOptions.nodes.font.size = parseInt(unpackedData.fontSize);
+    if (typeof unpackedData.shape !== "undefined") {
+        nodeShape = unpackedData.shape;
+    } else {
+        nodeShape = "text";
     }
+    const networkOptions = setStyle(visNetwork, unpackedData.shape, fontSize);
     visNetwork.setOptions(networkOptions);
 }
 
@@ -737,7 +736,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const shapeMenu = addSelectMenu(shapeOptions, shapeMenuID, "text");
 
     shapeMenu.change(function(){
-        const visOptions = setShapeStyle(visNetwork, shapeMenu.val());
+        const visOptions = setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
         visNetwork.setOptions(visOptions);
         redrawMe();
     });
@@ -747,8 +746,9 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const fontMenu = addSelectMenu(fontOptions, fontMenuID, 16);
 
     fontMenu.change(function(){
-       setFontSize(visNetwork, fontMenu.val());
-       redrawMe();
+        const visOptions = setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
+        visNetwork.setOptions(visOptions);
+        redrawMe();
     });
 
     const button = inputTable.find("input").first();
@@ -770,10 +770,33 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
         addSampleData(inputTable, redrawMe, visNetwork);
         redrawMe();
     }
+    updateSelected(visNetwork, fontMenu, shapeMenu);
 
     setKeydownListener(inputTable, redrawMe);
+    console.log(visNetwork);
 }
 
+function updateSelected(network, fontMenu, shapeMenu) {
+    const fontSize = network.nodesHandler.options.font.size.toString();
+    const shape = network.nodesHandler.options.shape;
+    const nodeBorderColor = network.nodesHandler.options.color.border = "#ffffff";
+
+    function updateMenu(menu, option) {
+        if (typeof option !== "undefined") {
+            menu.children().each(function () {
+                if (nodeBorderColor === "#ffffff" && option === "box" && this.value === "text") {
+                    $(this).attr('selected', 'selected');
+                } else if (this.value === option && !(nodeBorderColor === "#ffffff" && option === "box")) {
+                    $(this).attr('selected', 'selected');
+                } else {
+                    $(this).removeAttr('selected');
+                }
+            });
+        }
+    }
+    updateMenu(fontMenu, fontSize);
+    updateMenu(shapeMenu, shape);
+}
 
 function getExampleDatasets() {
     "use strict";

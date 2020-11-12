@@ -164,8 +164,13 @@ function getNodePositionsFromNetwork(graph, network) {
 }
 
 function getNodeOptions(graph, network) {
+    let nodeShape = network.nodesHandler.options.shape;
+    const borderColor = network.nodesHandler.options.color.border;
+    if (borderColor === "#ffffff" && nodeShape === "box") {
+        nodeShape = "text"
+    }
     graph.fontSize = network.nodesHandler.options.font.size;
-    graph.shape = network.nodesHandler.options.shape;
+    graph.shape = nodeShape;
 }
 
 function getVisOptions() {
@@ -272,7 +277,7 @@ function setStyle(visNetwork, shapeStyle, fontSize) {
     let visOptions = getVisOptions();
     if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
         visOptions.nodes.size = 5;
-        visOptions.nodes.color.background = 'black';
+        visOptions.nodes.color.background = '#000000';
     }
 
     if (shapeStyle === "text") {
@@ -280,7 +285,7 @@ function setStyle(visNetwork, shapeStyle, fontSize) {
         visOptions.nodes.color.border = '#ffffff';
     } else {
         visOptions.nodes.shape = shapeStyle;
-        visOptions.nodes.color.border = 'black';
+        visOptions.nodes.color.border = '#000000';
     }
     visOptions.nodes.font.size = parseInt(fontSize);
     return visOptions;
@@ -631,7 +636,7 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
         nodeShape = "text";
     }
     const networkOptions = setStyle(visNetwork, unpackedData.shape, fontSize);
-    visNetwork.setOptions(networkOptions);
+    visNetwork.setOptioqs(networkOptions);
 }
 
 
@@ -773,7 +778,6 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     updateSelected(visNetwork, fontMenu, shapeMenu);
 
     setKeydownListener(inputTable, redrawMe);
-    console.log(visNetwork);
 }
 
 function updateSelected(network, fontMenu, shapeMenu) {

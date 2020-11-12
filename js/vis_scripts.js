@@ -277,7 +277,7 @@ function setStyle(visNetwork, shapeStyle, fontSize) {
     let visOptions = getVisOptions();
     if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
         visOptions.nodes.size = 5;
-        visOptions.nodes.color.background = '#000000';
+        visOptions.nodes.color.background = 'black';
     }
 
     if (shapeStyle === "text") {
@@ -285,10 +285,10 @@ function setStyle(visNetwork, shapeStyle, fontSize) {
         visOptions.nodes.color.border = '#ffffff';
     } else {
         visOptions.nodes.shape = shapeStyle;
-        visOptions.nodes.color.border = '#000000';
+        visOptions.nodes.color.border = 'black';
     }
     visOptions.nodes.font.size = parseInt(fontSize);
-    return visOptions;
+    visNetwork.setOptions(visOptions);
 }
 
 
@@ -595,6 +595,23 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
     "use strict";
     const unpackedData = deserialiseGraph(serialisedData);
 
+    // Set options if present in URL
+    let fontSize;
+    let nodeShape;
+    if  (typeof unpackedData.fontSize !== "undefined") {
+        fontSize = parseInt(unpackedData.fontSize);
+    } else {
+        fontSize = 16;
+    }
+    if (typeof unpackedData.shape !== "undefined") {
+        nodeShape = unpackedData.shape;
+    } else {
+        nodeShape = "text";
+    }
+    setStyle(visNetwork, unpackedData.shape, fontSize);
+
+    // TODO FIX BUG IN BORDER COLOR - NOT CLEAR WHY THIS DOES NOT UPDATE
+
     // ToDo Re-write this using array.some()
     // We will manually add the graph data to the table
     unpackedData.edges.forEach(function (edge) {
@@ -621,22 +638,6 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
     // This is necessary because we can't store the node x and y coordinates in the table
     // and hope for them to be displayed later
     setNetworkData(unpackedData, visNetwork);
-
-    // Set options if present in URL
-    let fontSize;
-    let nodeShape;
-    if  (typeof unpackedData.fontSize !== "undefined") {
-        fontSize = parseInt(unpackedData.fontSize);
-    } else {
-        fontSize = 16;
-    }
-    if (typeof unpackedData.shape !== "undefined") {
-        nodeShape = unpackedData.shape;
-    } else {
-        nodeShape = "text";
-    }
-    const networkOptions = setStyle(visNetwork, unpackedData.shape, fontSize);
-    visNetwork.setOptioqs(networkOptions);
 }
 
 
@@ -741,8 +742,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const shapeMenu = addSelectMenu(shapeOptions, shapeMenuID, "text");
 
     shapeMenu.change(function(){
-        const visOptions = setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
-        visNetwork.setOptions(visOptions);
+        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
         redrawMe();
     });
 
@@ -751,8 +751,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const fontMenu = addSelectMenu(fontOptions, fontMenuID, 16);
 
     fontMenu.change(function(){
-        const visOptions = setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
-        visNetwork.setOptions(visOptions);
+        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
         redrawMe();
     });
 

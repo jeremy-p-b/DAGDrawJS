@@ -274,21 +274,25 @@ function addSelectMenu(options, containerID, selected) {
 }
 
 function setStyle(visNetwork, shapeStyle, fontSize) {
+    "use strict"
     let visOptions = getVisOptions();
     if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
         visOptions.nodes.size = 5;
-        visOptions.nodes.color.background = 'black';
+        visOptions.nodes.color.background = '#000000';
+    } else {
+        visOptions.nodes.color.background = '#ffffff';
     }
-
     if (shapeStyle === "text") {
         visOptions.nodes.shape = 'box';
         visOptions.nodes.color.border = '#ffffff';
     } else {
         visOptions.nodes.shape = shapeStyle;
-        visOptions.nodes.color.border = 'black';
+        visOptions.nodes.color.border = '#000000';
     }
     visOptions.nodes.font.size = parseInt(fontSize);
     visNetwork.setOptions(visOptions);
+    console.log(visNetwork);
+    console.log(visOptions);
 }
 
 
@@ -741,19 +745,9 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
 
     const shapeMenu = addSelectMenu(shapeOptions, shapeMenuID, "text");
 
-    shapeMenu.change(function(){
-        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
-        redrawMe();
-    });
-
     const fontOptions = getFontOptions();
 
     const fontMenu = addSelectMenu(fontOptions, fontMenuID, 16);
-
-    fontMenu.change(function(){
-        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
-        redrawMe();
-    });
 
     const button = inputTable.find("input").first();
 
@@ -774,7 +768,18 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
         addSampleData(inputTable, redrawMe, visNetwork);
         redrawMe();
     }
+
     updateSelected(visNetwork, fontMenu, shapeMenu);
+
+    shapeMenu.change(function(){
+        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
+        redrawMe();
+    });
+
+    fontMenu.change(function(){
+        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
+        redrawMe();
+    });
 
     setKeydownListener(inputTable, redrawMe);
 }
@@ -801,14 +806,6 @@ function updateSelected(network, fontMenu, shapeMenu) {
     updateMenu(shapeMenu, shape);
 }
 
-function getExampleDatasets() {
-    "use strict";
-    return {
-        "testing1": {"nodes":[{"id":"PC","label":"PC","shape":"box","x":-264,"y":-222},{"id":"Focusrite 2i2","label":"Focusrite 2i2","shape":"box","x":-20,"y":-223},{"id":"LSR310","label":"LSR310","shape":"box","x":-257,"y":-25},{"id":"2 x LSR305","label":"2 x LSR305","shape":"box","x":-4,"y":-28}],"edges":[{"from":"PC","to":"Focusrite 2i2","arrows":"to"},{"from":"Focusrite 2i2","to":"LSR310","arrows":"to"},{"from":"LSR310","to":"2 x LSR305","arrows":"to"}]},
-        "testing2.1": {"nodes":[{"id":"CHROMECAST AUDIO","label":"CHROMECAST AUDIO","shape":"box","x":-77,"y":-330},{"id":"MARANTZ PM6006","label":"MARANTZ PM6006","shape":"box","x":-73,"y":-219},{"id":"KEF Q150","label":"KEF Q150","shape":"box","x":6,"y":-48},{"id":" YAMAHA NS-SW300","label":" YAMAHA NS-SW300","shape":"box","x":-159,"y":8}],"edges":[{"from":"CHROMECAST AUDIO","to":"MARANTZ PM6006","arrows":"to"},{"from":"MARANTZ PM6006","to":"KEF Q150","arrows":"to"},{"from":"MARANTZ PM6006","to":" YAMAHA NS-SW300","arrows":"to"}]},
-        "testing2.2": {"nodes":[{"id":"CHROMECAST AUDIO","label":"CHROMECAST AUDIO","shape":"box","x":-77,"y":-330},{"id":"MARANTZ PM6006","label":"MARANTZ PM6006","shape":"box","x":-73,"y":-219},{"id":" YAMAHA NS-SW300","label":" YAMAHA NS-SW300","shape":"box","x":-159,"y":8},{"id":"KEF Q150","label":"KEF Q150","shape":"box","x":24,"y":-98}],"edges":[{"from":"CHROMECAST AUDIO","to":"MARANTZ PM6006","arrows":"to"},{"from":" YAMAHA NS-SW300","to":"KEF Q150","arrows":"to"},{"from":"MARANTZ PM6006","to":" YAMAHA NS-SW300","arrows":"to"}]}
-    };
-}
 
 function getShapeOptions() {
     const shapeOptions = [
@@ -837,30 +834,6 @@ function getFontOptions() {
     return fontOptions;
 }
 
-function setUpExample(exampleName, drawingDivID, exportURLID, downloadID) {
-    "use strict";
-    const exampleDataset = getExampleDatasets()[exampleName];
-    const drawingArea = $("#" + drawingDivID);
-
-    const visNetwork = makeEmptyNetwork(drawingArea);
-    setNetworkData(exampleDataset, visNetwork);
-    visNetwork.redraw();
-
-    visNetwork.moveTo({scale: 1.0});
-
-    const updateExportAndDownload = function() {
-        getNodePositionsFromNetwork(exampleDataset, visNetwork);
-        updateExportURL(exampleDataset, $("#" + exportURLID));
-        addDownloadLink(downloadID, drawingArea);
-    };
-
-    updateExportAndDownload();
-
-    visNetwork.on(
-        "release",
-        updateExportAndDownload
-    );
-}
 
 
 function copyToClipboard(idExportLink) {

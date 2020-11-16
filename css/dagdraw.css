@@ -110,100 +110,39 @@ div table th tr td {
     height: 100%;
 }
 
-.vis-navigation {
-    /* Position the navigation buttons in the top right of the canvas */
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: grid;
-    grid-template-columns: 1em 1em 1em;
-    grid-template-rows: 1em 1em 1em;
-    font-size: 1.5rem;
-    margin: 0.2em;
-    grid-gap: 1px;
-    font-family: Arial, sans-serif;
-}
-.vis-zoomIn, .vis-zoomOut, .vis-up, .vis-down, .vis-left, .vis-right {
-    /* Style for the zoom in and zoom out buttons */
-    position: relative;
-    height: 1em;
-    width: 1em;
-    box-sizing: border-box;
-    box-shadow:0 0 0 1px black;
+body div.vis-network div.vis-navigation div.vis-button:hover {
+    box-shadow: 0 0 3px 3px #D3D3D3;
 }
 
-.vis-up {
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 1;
+body div.vis-network div.vis-navigation div.vis-button {
+    width: 36px;
+    height: 36px;
 }
 
-.vis-down {
-    grid-column: 2 / span 1;
-    grid-row: 3 / span 1;
+body div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends {
+    background-image: url("/images/lens.png");
 }
 
-.vis-left {
-    grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
+body div.vis-network div.vis-navigation div.vis-button.vis-zoomIn {
+    background-image: url("/images/plus-sign.png");
 }
 
-.vis-right {
-    grid-column: 3 / span 1;
-    grid-row: 2 / span 1;
+body div.vis-network div.vis-navigation div.vis-button.vis-zoomOut {
+    background-image: url("/images/minus-sign.png");
 }
 
-.vis-zoomIn {
-    margin-top: 0.5em;
-    grid-column: 3 / span 1;
-    grid-row: 4 / span 1;
+body div.vis-network div.vis-navigation div.vis-button.vis-left {
+    background-image: url("/images/left-arrow.png");
 }
 
-.vis-zoomOut {
-    grid-column: 3 / span 1;
-    grid-row: 5 / span 1;
+body div.vis-network div.vis-navigation div.vis-button.vis-right {
+    background-image: url("/images/right-arrow.png");
 }
 
-
-
-.vis-zoomIn:before, .vis-zoomOut:before, .vis-left:before, .vis-right:before, .vis-up:before, .vis-down:before {
-    position: absolute;
-    font-size: 1.2rem;
-    padding-top: 0.15rem;
-    padding-bottom: 0.15rem;
-    margin-left: auto;
-    margin-right: auto;
-    text-align:center;
-    left: 0;
-    right: 0;
+body div.vis-network div.vis-navigation div.vis-button.vis-up {
+    background-image: url("/images/up-arrow.png");
 }
 
-.vis-zoomIn:before {
-    /* Content for zoom in button */
-    content: "+";
+body div.vis-network div.vis-navigation div.vis-button.vis-down {
+    background-image: url("/images/down-arrow.png");
 }
-
-.vis-zoomOut:before {
-    /* Content for zoom out button */
-    content: "-";
-}
-
-.vis-left:before {
-    /* Content for left arrow */
-    content: "\02C2";
-}
-
-.vis-right:before {
-    /* Content for left arrow */
-    content: "\02C3";
-}
-
-.vis-up:before {
-    /* Content for left arrow */
-    content: "\02C4";
-}
-
-.vis-down:before {
-    /* Content for left arrow */
-    content: "\02C5";
-}
-

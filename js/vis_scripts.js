@@ -291,8 +291,6 @@ function setStyle(visNetwork, shapeStyle, fontSize) {
     }
     visOptions.nodes.font.size = parseInt(fontSize);
     visNetwork.setOptions(visOptions);
-    console.log(visNetwork);
-    console.log(visOptions);
 }
 
 
@@ -612,9 +610,7 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
     } else {
         nodeShape = "text";
     }
-    setStyle(visNetwork, unpackedData.shape, fontSize);
-
-    // TODO FIX BUG IN BORDER COLOR - NOT CLEAR WHY THIS DOES NOT UPDATE
+    setStyle(visNetwork, nodeShape, fontSize);
 
     // ToDo Re-write this using array.some()
     // We will manually add the graph data to the table
@@ -760,7 +756,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     drawingArea.parent().append(makeRefreshButton(redrawMe));
 
     const queryParams = getQueryParams(document.location.search);
-
+    
     if (queryParams.hasOwnProperty("serialised")) {
         addDataFromURL(queryParams.serialised, inputTable, redrawMe, visNetwork);
         redrawMe();
@@ -787,7 +783,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
 function updateSelected(network, fontMenu, shapeMenu) {
     const fontSize = network.nodesHandler.options.font.size.toString();
     const shape = network.nodesHandler.options.shape;
-    const nodeBorderColor = network.nodesHandler.options.color.border = "#ffffff";
+    const nodeBorderColor = network.nodesHandler.options.color.border;
 
     function updateMenu(menu, option) {
         if (typeof option !== "undefined") {

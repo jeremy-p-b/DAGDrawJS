@@ -79,7 +79,7 @@ const hifidrawTesting = (function() {
             assert.equal("none", source_box.attr("autocapitalize"));
         },
     
-    
+
         test_make_source_box_with_id: function() {
     
             let source_box = makeSourceBox(null, 0).filter("input");
@@ -570,7 +570,9 @@ const hifidrawTesting = (function() {
                                if (!visData.hasOwnProperty("nodes") || !visData.hasOwnProperty("edges")) {
                                    assert(false, "visNetwork should have data set");
                                }
-                           }});
+                           },
+                           setOptions: ()=> null,
+                           });
     
             const body_rows = table.children("tbody").first().children("tr").length;
     
@@ -743,7 +745,7 @@ $(document).ready(function () {
         let append_string = "<p>" + "Running " + test_function.name + "...  ";
 
         // setUp
-        const visNetwork = {setData: ()=>null};
+        const visNetwork = {setData: ()=>null, setOptions: ()=>null};
         const redrawFunc = ()=>null;
         addSampleData($("#inputTable"), redrawFunc, visNetwork);
 

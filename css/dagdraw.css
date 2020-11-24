@@ -57,10 +57,57 @@ body {
     border: 1px solid #c1c0bd;
 }
 
-.split-nav {
+.navbar {
     /* nav doesn't have a border by default */
     border: 1px solid #c1c0bd;
+    display: flex;
+    justify-content: space-between;
 }
+
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link, .logo-link:hover {
+    display: none;
+    border: 0;
+    border-radius: 0;
+    margin-left: 1rem;
+}
+
+.github-logo-text {
+    display: none;
+}
+
+.logo-link.github-logo-image {
+    display: flex;
+}
+
+.text-link {
+    font-size: 1.3rem;
+    margin-left: 1rem;
+}
+
+.other-logo {
+    border-width: 0;
+    align-self: center;
+}
+
+@media (min-width:768px) {
+    .logo-link, .logo-link:hover {
+        display: flex;
+    }
+    .logo-link.github-logo-image {
+        display: none;
+    }
+    .github-logo-text {
+        display: inline;
+    }
+}
+
+
+
 
 .paper.small-text {
     /* fit more in each paper element */

@@ -204,7 +204,8 @@ function getVisOptions() {
             margin: 8,
             font: {
                 size: 16,
-                face: "arial"  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC,
+                face: "arial",  //https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC
+                color: "black"
             }
         },
         layout: {

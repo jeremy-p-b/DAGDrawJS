@@ -91,7 +91,7 @@ function splitLine(text, maxLength) {
     return newString;
 }
 
-function addNodeFromCell(tdObject, nodeArray, lineLength) {
+function addNodeFromCell(tdObject, nodeArray, lineLength, datalist) {
     // This is messy but testable.
     // Pass in a <td></td> and an array of nodes,
     // get back the id of any nodes added or the id
@@ -119,16 +119,20 @@ function addNodeFromCell(tdObject, nodeArray, lineLength) {
         nodeArray.push({id: id,
                         label: displayText
         });
+        datalist.append(
+            "<option value='" + id + "'>"
+        );
     }
 
     return id;
 }
 
 
-function graphFromTable(tableObj, lineLengthMenu) {
+function graphFromTable(tableObj, lineLengthMenu, datalist) {
     "use strict";
-    const lineLength = lineLengthMenu.val();
+    datalist.empty(); // empty datalist to be refille
 
+    const lineLength = lineLengthMenu.val();
     const tableBody = tableObj.children("tbody").first();
     const tableRows = tableBody.children("tr");
 
@@ -142,13 +146,12 @@ function graphFromTable(tableObj, lineLengthMenu) {
             const srcTD = tableRow.children("td").eq(0);
 
             // If source is not in nodes already, add it
-            const srcID = addNodeFromCell(srcTD, nodes, lineLength);
-
+            const srcID = addNodeFromCell(srcTD, nodes, lineLength, datalist);
             // Get dest
             const dstTD = tableRow.children("td").eq(1);
 
             // If dest is not in nodes already, add it
-            const dstID = addNodeFromCell(dstTD, nodes, lineLength);
+            const dstID = addNodeFromCell(dstTD, nodes, lineLength, datalist);
 
             // Add edge
             edges.push({from: srcID,
@@ -400,13 +403,13 @@ function updateExportURL(graph, linkObject) {
 }
 
 
-function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj, menus) {
+function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj, menus, datalist) {
     "use strict";
 
     // When the user repositions a node, we need to update the export and download links
     visNetwork.on("release",
                   function(){
-                      const graph = graphFromTable(tableObj, menus.lineLengthMenu);
+                      const graph = graphFromTable(tableObj, menus.lineLengthMenu, datalist);
                       getNodePositionsFromNetwork(graph, visNetwork);
                       getNodeOptions(graph, visNetwork);
                       setExportURL(graph);
@@ -417,8 +420,7 @@ function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj, men
     return function redraw() {
         // ToDo This function does too much, break it up
         setStyle(visNetwork, menus.shapeMenu.val(), menus.fontMenu.val())
-
-        const graph = graphFromTable(tableObj, menus.lineLengthMenu);
+        const graph = graphFromTable(tableObj, menus.lineLengthMenu, datalist);
         let scale;
         let position;
 
@@ -545,18 +547,8 @@ function makeTable(tableID) {
 
 function makeComponentsDatalist() {
     "use strict";
-    const options = ["Smoking",
-                     "Lung cancer",
-                     "Obesity"];
-
     let datalistString = "<datalist id='components'>";
-
-    options.sort().forEach(function(option){
-        datalistString += "<option value='" + option + "'>";
-    });
-
     datalistString += "</datalist>";
-
     return $(datalistString);
 }
 
@@ -755,7 +747,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     "use strict";
 
     // Make a data lists for use by the table
-    makeComponentsDatalist().appendTo($("body"));
+    const datalist = makeComponentsDatalist().appendTo($("body"));
 
     const inputDiv = $("#" + inputDivID);
     const drawingArea = $("#" + drawingDivID);
@@ -787,7 +779,7 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
         lineLengthMenu: lineLengthMenu
     }
 
-    const redrawMe = makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, inputTable, menus);
+    const redrawMe = makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, inputTable, menus, datalist);
 
     const button = inputTable.find("input").first();
 

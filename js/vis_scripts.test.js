@@ -45,7 +45,18 @@ const hifidrawTesting = (function() {
             source_box.remove();
         },
     
-    
+        test_split_line: function () {
+
+            let text = splitLine("Carretera", 8);
+            assert.equal("Carreter-\na", text);
+
+            text = splitLine("Howdy y'all", 8);
+            assert.equal("Howdy \ny'all", text);
+
+            text = splitLine("One quite long line", 8);
+            assert.equal("One \nquite \nlong \nline", text);
+        },
+
         test_make_destination_box: function() {
 
             const destination_box = makeDestinationBox().filter("input");

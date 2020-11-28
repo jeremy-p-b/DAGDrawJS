@@ -70,7 +70,28 @@ function countValidRows(tableObj) {
 }
 
 
-function addNodeFromCell(tdObject, nodeArray) {
+function splitLine(text, maxLength) {
+    "use strict";
+    let subString = "";
+    let remainingString = text;
+    let newString = "";
+    let spaceIndex
+    while (remainingString.length > maxLength) {
+        subString = remainingString.substring(0, maxLength + 1);
+        spaceIndex = subString.lastIndexOf(" ");
+        if (spaceIndex === -1) {
+            newString += remainingString.substring(0, maxLength) + "-" + "\n";
+            remainingString = remainingString.substring(maxLength);
+        } else {
+            newString += remainingString.substring(0, spaceIndex+1) + "\n";
+            remainingString = remainingString.substring(spaceIndex+1);
+        }
+    }
+    newString += remainingString;
+    return newString;
+}
+
+function addNodeFromCell(tdObject, nodeArray, lineLength) {
     // This is messy but testable.
     // Pass in a <td></td> and an array of nodes,
     // get back the id of any nodes added or the id
@@ -78,11 +99,17 @@ function addNodeFromCell(tdObject, nodeArray) {
     "use strict";
     let id = null;
     const input = tdObject.children("input").first();
+    let displayText = "";
+    if (lineLength === "none") {
+        displayText = input.val();
+    } else {
+        displayText = splitLine(input.val(), parseInt(lineLength));
+    }
 
     // do we have a node for this already?
     nodeArray.some(function (element) {
-        if (element.label === input.val()) {
-            id = element.label;
+        if (element.id === input.val()) {
+            id = element.id;
             return true;
         }
     });
@@ -90,7 +117,7 @@ function addNodeFromCell(tdObject, nodeArray) {
     if (!id) {
         id = input.val();
         nodeArray.push({id: id,
-                        label: input.val()
+                        label: displayText
         });
     }
 
@@ -98,8 +125,10 @@ function addNodeFromCell(tdObject, nodeArray) {
 }
 
 
-function graphFromTable(tableObj) {
+function graphFromTable(tableObj, lineLengthMenu) {
     "use strict";
+    const lineLength = lineLengthMenu.val();
+
     const tableBody = tableObj.children("tbody").first();
     const tableRows = tableBody.children("tr");
 
@@ -113,13 +142,13 @@ function graphFromTable(tableObj) {
             const srcTD = tableRow.children("td").eq(0);
 
             // If source is not in nodes already, add it
-            const srcID = addNodeFromCell(srcTD, nodes);
+            const srcID = addNodeFromCell(srcTD, nodes, lineLength);
 
             // Get dest
             const dstTD = tableRow.children("td").eq(1);
 
             // If dest is not in nodes already, add it
-            const dstID = addNodeFromCell(dstTD, nodes);
+            const dstID = addNodeFromCell(dstTD, nodes, lineLength);
 
             // Add edge
             edges.push({from: srcID,
@@ -130,7 +159,8 @@ function graphFromTable(tableObj) {
 
     return {
         nodes: nodes,
-        edges: edges
+        edges: edges,
+        lineLength: lineLength
     };
 }
 
@@ -276,6 +306,7 @@ function addSelectMenu(options, containerID, selected) {
 
 function setStyle(visNetwork, shapeStyle, fontSize) {
     "use strict"
+
     let visOptions = getVisOptions();
     if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
         visOptions.nodes.size = 5;
@@ -369,13 +400,13 @@ function updateExportURL(graph, linkObject) {
 }
 
 
-function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj) {
+function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj, menus) {
     "use strict";
 
     // When the user repositions a node, we need to update the export and download links
     visNetwork.on("release",
                   function(){
-                      const graph = graphFromTable(tableObj);
+                      const graph = graphFromTable(tableObj, menus.lineLengthMenu);
                       getNodePositionsFromNetwork(graph, visNetwork);
                       getNodeOptions(graph, visNetwork);
                       setExportURL(graph);
@@ -385,7 +416,9 @@ function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj) {
 
     return function redraw() {
         // ToDo This function does too much, break it up
-        const graph = graphFromTable(tableObj);
+        setStyle(visNetwork, menus.shapeMenu.val(), menus.fontMenu.val())
+
+        const graph = graphFromTable(tableObj, menus.lineLengthMenu);
         let scale;
         let position;
 
@@ -416,7 +449,6 @@ function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj) {
         });
 
         setDownloadLink();
-
     };
 }
 
@@ -594,24 +626,30 @@ function getQueryParams(queryString) {
 }
 
 
-function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
+function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork, menus) {
     "use strict";
     const unpackedData = deserialiseGraph(serialisedData);
 
-    // Set options if present in URL
-    let fontSize;
-    let nodeShape;
+    // Set options if present in URL otherwise use defaults
+    let options = {
+        fontSize: "16",
+        nodeShape: "text",
+        lineLength: "none"
+    };
     if  (typeof unpackedData.fontSize !== "undefined") {
-        fontSize = parseInt(unpackedData.fontSize);
-    } else {
-        fontSize = 16;
+        options.fontSize = unpackedData.fontSize.toString();
     }
     if (typeof unpackedData.shape !== "undefined") {
-        nodeShape = unpackedData.shape;
-    } else {
-        nodeShape = "text";
+        options.nodeShape = unpackedData.shape;
     }
-    setStyle(visNetwork, nodeShape, fontSize);
+    if (typeof unpackedData.lineLength !== "undefined") {
+        if (unpackedData.lineLength === "none") {
+            options.lineLength = unpackedData.lineLength;
+        } else {
+            options.lineLength = unpackedData.lineLength;
+        }
+    }
+    updateSelected(visNetwork, menus, options);
 
     // ToDo Re-write this using array.some()
     // We will manually add the graph data to the table
@@ -622,11 +660,11 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
         // get the labels for the nodes connected by this edge
         unpackedData.nodes.forEach(function (node) {
             if (node.id === edge.from) {
-                fromLabel = node.label;
+                fromLabel = node.id;
             }
 
             if (node.id === edge.to) {
-                toLabel = node.label;
+                toLabel = node.id;
             }
         });
 
@@ -642,7 +680,7 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork) {
 }
 
 
-function addSampleData(tableObj, redrawFunc, visNetwork) {
+function addSampleData(tableObj, redrawFunc, visNetwork, menus) {
     "use strict";
 
     // The sample data
@@ -661,7 +699,8 @@ function addSampleData(tableObj, redrawFunc, visNetwork) {
         smoking_obesity_cancer,
         tableObj,
         redrawFunc,
-        visNetwork);
+        visNetwork,
+        menus);
 }
 
 
@@ -712,7 +751,7 @@ function setKeydownListener(tableObj, redrawFunc) {
 }
 
 
-function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadID, shapeMenuID, fontMenuID) {
+function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadID, menuIDs) {
     "use strict";
 
     // Make a data lists for use by the table
@@ -736,15 +775,19 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
 
     const inputTable = makeTable("inputTable");
 
-    const redrawMe = makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, inputTable);
+    const lineLengthMenu = addSelectMenu(getLineLengthOptions(), menuIDs.lineLengthMenuID, "none")
 
-    const shapeOptions = getShapeOptions();
+    const shapeMenu = addSelectMenu(getShapeOptions(), menuIDs.shapeMenuID, "text");
 
-    const shapeMenu = addSelectMenu(shapeOptions, shapeMenuID, "text");
+    const fontMenu = addSelectMenu(getFontSizeOptions(), menuIDs.fontMenuID, 16);
 
-    const fontOptions = getFontOptions();
+    const menus = {
+        shapeMenu: shapeMenu,
+        fontMenu: fontMenu,
+        lineLengthMenu: lineLengthMenu
+    }
 
-    const fontMenu = addSelectMenu(fontOptions, fontMenuID, 16);
+    const redrawMe = makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, inputTable, menus);
 
     const button = inputTable.find("input").first();
 
@@ -759,39 +802,33 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const queryParams = getQueryParams(document.location.search);
     
     if (queryParams.hasOwnProperty("serialised")) {
-        addDataFromURL(queryParams.serialised, inputTable, redrawMe, visNetwork);
+        addDataFromURL(queryParams.serialised, inputTable, redrawMe, visNetwork, menus);
         redrawMe();
     } else {
-        addSampleData(inputTable, redrawMe, visNetwork);
+        addSampleData(inputTable, redrawMe, visNetwork, menus);
         redrawMe();
     }
 
-    updateSelected(visNetwork, fontMenu, shapeMenu);
-
     shapeMenu.change(function(){
-        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
         redrawMe();
     });
 
     fontMenu.change(function(){
-        setStyle(visNetwork, shapeMenu.val(), fontMenu.val());
+        redrawMe();
+    });
+
+    lineLengthMenu.change(function(){
         redrawMe();
     });
 
     setKeydownListener(inputTable, redrawMe);
 }
 
-function updateSelected(network, fontMenu, shapeMenu) {
-    const fontSize = network.nodesHandler.options.font.size.toString();
-    const shape = network.nodesHandler.options.shape;
-    const nodeBorderColor = network.nodesHandler.options.color.border;
-
+function updateSelected(network, menus, options) {
     function updateMenu(menu, option) {
         if (typeof option !== "undefined") {
             menu.children().each(function () {
-                if (nodeBorderColor === "#ffffff" && option === "box" && this.value === "text") {
-                    $(this).attr('selected', 'selected');
-                } else if (this.value === option && !(nodeBorderColor === "#ffffff" && option === "box")) {
+                if (this.value === option) {
                     $(this).attr('selected', 'selected');
                 } else {
                     $(this).removeAttr('selected');
@@ -799,12 +836,14 @@ function updateSelected(network, fontMenu, shapeMenu) {
             });
         }
     }
-    updateMenu(fontMenu, fontSize);
-    updateMenu(shapeMenu, shape);
+    updateMenu(menus.fontMenu, options.fontSize);
+    updateMenu(menus.shapeMenu, options.nodeShape);
+    updateMenu(menus.lineLengthMenu, options.lineLength);
 }
 
 
 function getShapeOptions() {
+    "use strict";
     const shapeOptions = [
         {val: "text", text: "Text"},
         {val: "box", text: "Box"},
@@ -816,21 +855,38 @@ function getShapeOptions() {
     return shapeOptions;
 }
 
-function getFontOptions() {
+function getFontSizeOptions() {
+    "use strict";
     const fontOptions = [
-        {val: 12, text: "12"},
-        {val: 14, text: "14"},
-        {val: 16, text: "16"},
-        {val: 18, text: "18"},
-        {val: 20, text: "20"},
-        {val: 22, text: "22"},
-        {val: 24, text: "24"},
-        {val: 26, text: "26"},
-        {val: 28, text: "28"},
+        {val: "12", text: "12"},
+        {val: "14", text: "14"},
+        {val: "16", text: "16"},
+        {val: "18", text: "18"},
+        {val: "20", text: "20"},
+        {val: "22", text: "22"},
+        {val: "24", text: "24"},
+        {val: "26", text: "26"},
+        {val: "28", text: "28"}
     ]
     return fontOptions;
 }
 
+function getLineLengthOptions() {
+    "use strict";
+    const lineLengthOptions = [
+        {val: "none", text: "none"},
+        {val: "4", text: "4"},
+        {val: "6", text: "6"},
+        {val: "8", text: "8"},
+        {val: "10", text: "10"},
+        {val: "12", text: "12"},
+        {val: "14", text: "14"},
+        {val: "16", text: "16"},
+        {val: "18", text: "18"},
+        {val: "20", text: "20"}
+    ]
+    return lineLengthOptions
+}
 
 
 function copyToClipboard(idExportLink) {

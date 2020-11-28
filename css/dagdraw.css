@@ -16,6 +16,7 @@ body {
 
 .options, .buttons {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .options .drop-down {

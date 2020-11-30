@@ -202,6 +202,7 @@ function getNodeOptions(graph, network) {
     if (borderColor === "#ffffff" && nodeShape === "box") {
         nodeShape = "text"
     }
+    graph.fontStyle = network.nodesHandler.options.font.face;
     graph.fontSize = network.nodesHandler.options.font.size;
     graph.shape = nodeShape;
 }
@@ -307,8 +308,11 @@ function addSelectMenu(options, containerID, selected) {
     return selectMenu;
 }
 
-function setStyle(visNetwork, shapeStyle, fontSize) {
+function setStyle(visNetwork, menus) {
     "use strict"
+    const shapeStyle = menus.shapeMenu.val();
+    const fontSize = menus.fontSizeMenu.val();
+    const fontStyle = menus.fontStyleMenu.val();
 
     let visOptions = getVisOptions();
     if (['square', 'diamond', 'dot'].includes(shapeStyle)) {
@@ -325,6 +329,7 @@ function setStyle(visNetwork, shapeStyle, fontSize) {
         visOptions.nodes.color.border = '#000000';
     }
     visOptions.nodes.font.size = parseInt(fontSize);
+    visOptions.nodes.font.face = fontStyle;
     visNetwork.setOptions(visOptions);
 }
 
@@ -419,7 +424,7 @@ function makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, tableObj, men
 
     return function redraw() {
         // ToDo This function does too much, break it up
-        setStyle(visNetwork, menus.shapeMenu.val(), menus.fontMenu.val())
+        setStyle(visNetwork, menus)
         const graph = graphFromTable(tableObj, menus.lineLengthMenu, datalist);
         let scale;
         let position;
@@ -625,6 +630,7 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork, menus)
     // Set options if present in URL otherwise use defaults
     let options = {
         fontSize: "16",
+        fontStyle: "arial",
         nodeShape: "text",
         lineLength: "none"
     };
@@ -633,6 +639,9 @@ function addDataFromURL(serialisedData, tableObj, redrawFunc, visNetwork, menus)
     }
     if (typeof unpackedData.shape !== "undefined") {
         options.nodeShape = unpackedData.shape;
+    }
+    if (typeof unpackedData.fontStyle !== "undefined") {
+        options.fontStyle = unpackedData.fontStyle;
     }
     if (typeof unpackedData.lineLength !== "undefined") {
         if (unpackedData.lineLength === "none") {
@@ -768,15 +777,15 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
     const inputTable = makeTable("inputTable");
 
     const lineLengthMenu = addSelectMenu(getLineLengthOptions(), menuIDs.lineLengthMenuID, "none")
-
     const shapeMenu = addSelectMenu(getShapeOptions(), menuIDs.shapeMenuID, "text");
-
-    const fontMenu = addSelectMenu(getFontSizeOptions(), menuIDs.fontMenuID, 16);
+    const fontSizeMenu = addSelectMenu(getFontSizeOptions(), menuIDs.fontSizeMenuID, "16");
+    const fontStyleMenu = addSelectMenu(getFontStyleOptions(), menuIDs.fontStyleMenuID, "arial")
 
     const menus = {
         shapeMenu: shapeMenu,
-        fontMenu: fontMenu,
-        lineLengthMenu: lineLengthMenu
+        fontSizeMenu: fontSizeMenu,
+        lineLengthMenu: lineLengthMenu,
+        fontStyleMenu: fontStyleMenu
     }
 
     const redrawMe = makeRedrawFunc(setExportURL, setDownloadLink, visNetwork, inputTable, menus, datalist);
@@ -805,12 +814,16 @@ function setUpSingleDrawingPage(inputDivID, drawingDivID, exportURLID, downloadI
         redrawMe();
     });
 
-    fontMenu.change(function(){
+    fontSizeMenu.change(function(){
         redrawMe();
     });
 
     lineLengthMenu.change(function(){
         redrawMe();
+    });
+
+    fontStyleMenu.change(function(){
+       redrawMe();
     });
 
     setKeydownListener(inputTable, redrawMe);
@@ -828,9 +841,10 @@ function updateSelected(network, menus, options) {
             });
         }
     }
-    updateMenu(menus.fontMenu, options.fontSize);
+    updateMenu(menus.fontSizeMenu, options.fontSize);
     updateMenu(menus.shapeMenu, options.nodeShape);
     updateMenu(menus.lineLengthMenu, options.lineLength);
+    updateMenu(menus.fontStyleMenu, options.fontStyle);
 }
 
 
@@ -849,7 +863,7 @@ function getShapeOptions() {
 
 function getFontSizeOptions() {
     "use strict";
-    const fontOptions = [
+    const fontSizeOptions = [
         {val: "12", text: "12"},
         {val: "14", text: "14"},
         {val: "16", text: "16"},
@@ -860,7 +874,19 @@ function getFontSizeOptions() {
         {val: "26", text: "26"},
         {val: "28", text: "28"}
     ]
-    return fontOptions;
+    return fontSizeOptions;
+}
+
+function getFontStyleOptions() {
+    "use strict";
+    const fontStyleOptions = [
+        {val: "arial", text: "Arial"},
+        {val: "arial black", text: "Arial Black"},
+        {val: "times new roman", text: "Times Now Roman"},
+        {val: "courier new", text: "Courier New"},
+        {val: "verdana", text: "Verdana"}
+    ]
+    return fontStyleOptions;
 }
 
 function getLineLengthOptions() {

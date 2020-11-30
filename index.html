@@ -67,11 +67,14 @@
           <div class="drop-down" id="id_shape_menu">
             <span>Shape:</span>
           </div>
-          <div class="drop-down" id ="id_font_menu">
+          <div class="drop-down" id ="id_font_size_menu">
             <span>Font size:</span>
           </div>
           <div class="drop-down" id ="id_line_length_menu">
             <span>Max. line length:</span>
+          </div>
+          <div class="drop-down" id ="id_font_style_menu">
+            <span>Font:</span>
           </div>
         </div>
         <h5>Export Your Image</h5>
@@ -107,8 +110,9 @@
   <script>
     menuIDs = {
       shapeMenuID: "id_shape_menu",
-      fontMenuID: "id_font_menu",
-      lineLengthMenuID: "id_line_length_menu"
+      fontSizeMenuID: "id_font_size_menu",
+      lineLengthMenuID: "id_line_length_menu",
+      fontStyleMenuID: "id_font_style_menu"
     }
     window.onload = function() {
         // link our data and drawing area together

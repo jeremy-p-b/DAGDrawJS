@@ -864,6 +864,8 @@ function getShapeOptions() {
 function getFontSizeOptions() {
     "use strict";
     const fontSizeOptions = [
+        {val: "8", text: "8"},
+        {val: "10", text: "10"},
         {val: "12", text: "12"},
         {val: "14", text: "14"},
         {val: "16", text: "16"},

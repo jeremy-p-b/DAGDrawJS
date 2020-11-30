@@ -882,7 +882,7 @@ function getFontStyleOptions() {
     const fontStyleOptions = [
         {val: "arial", text: "Arial"},
         {val: "arial black", text: "Arial Black"},
-        {val: "times new roman", text: "Times Now Roman"},
+        {val: "times new roman", text: "Times New Roman"},
         {val: "courier new", text: "Courier New"},
         {val: "verdana", text: "Verdana"}
     ]

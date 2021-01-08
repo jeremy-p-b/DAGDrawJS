@@ -324,6 +324,7 @@ function setStyle(visNetwork, menus) {
     if (shapeStyle === "text") {
         visOptions.nodes.shape = 'box';
         visOptions.nodes.color.border = '#ffffff';
+        visOptions.nodes.margin = 3;
     } else {
         visOptions.nodes.shape = shapeStyle;
         visOptions.nodes.color.border = '#000000';

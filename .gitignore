@@ -2,3 +2,4 @@ geckodriver*
 .idea/*
 raphael.min.js
 ToDo.txt
+.DS_Store
